@@ -2,12 +2,52 @@ import React, { useState } from "react";
 import "./App.css";
 
 export default function App() {
+  const [loggedIn, setLoggedIn] = useState(false);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [activeTab, setActiveTab] = useState("inventory");
+
+  const handleLogin = (e) => {
+    e.preventDefault();
+    // Här kan du byta ut mot riktig API-koll
+    if (email && password) {
+      setLoggedIn(true);
+    } else {
+      alert("Please enter email and password");
+    }
+  };
+
+  if (!loggedIn) {
+    return (
+      <div className="login-container">
+        <div className="login-card">
+          <h1>Vaultrex Login</h1>
+          <form onSubmit={handleLogin}>
+            <input
+              type="email"
+              placeholder="Email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+            />
+            <input
+              type="password"
+              placeholder="Password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+            />
+            <button type="submit">Log In</button>
+          </form>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="dashboard">
       <header className="header">
-        <h1>Vaultrex Inventory</h1>
+        <h1>Vaultrex Dashboard</h1>
         <nav className="nav">
           <button
             className={activeTab === "inventory" ? "active" : ""}
