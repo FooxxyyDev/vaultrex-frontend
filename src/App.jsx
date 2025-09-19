@@ -1,14 +1,14 @@
 import React, { useState, useEffect } from "react";
 import "./App.css";
+import Dashboard from "./Dashboard"; // 👈 importera
 
 export default function App() {
-  const [activePage, setActivePage] = useState("inventory");
+  const [activePage, setActivePage] = useState("dashboard");
   const [activeTab, setActiveTab] = useState("list");
   const [items, setItems] = useState([]);
   const [name, setName] = useState("");
   const [quantity, setQuantity] = useState("");
 
-  // Hämta inventory
   useEffect(() => {
     if (activePage === "inventory") {
       fetch("https://vaultrex-backend.onrender.com/inventory")
@@ -41,15 +41,14 @@ export default function App() {
 
   return (
     <div className="app-container">
-      {/* Toppmeny */}
       <nav className="navbar">
         <h1 className="logo">VAULTREX</h1>
         <ul className="nav-links">
           <li
-            className={activePage === "home" ? "active" : ""}
-            onClick={() => setActivePage("home")}
+            className={activePage === "dashboard" ? "active" : ""}
+            onClick={() => setActivePage("dashboard")}
           >
-            Home
+            Dashboard
           </li>
           <li
             className={activePage === "inventory" ? "active" : ""}
@@ -66,18 +65,11 @@ export default function App() {
         </ul>
       </nav>
 
-      {/* Sidinnehåll */}
       <div className="page-content">
-        {activePage === "home" && (
-          <div className="home">
-            <h2>Welcome to Vaultrex Dashboard</h2>
-            <p>Manage your inventory with a futuristic interface.</p>
-          </div>
-        )}
+        {activePage === "dashboard" && <Dashboard />}
 
         {activePage === "inventory" && (
           <div className="inventory">
-            {/* Flikar */}
             <div className="tabs">
               <button
                 className={activeTab === "list" ? "tab active" : "tab"}
