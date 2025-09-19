@@ -35,8 +35,25 @@ body {
 .dashboard header {
   display: flex;
   justify-content: space-between;
+  align-items: center;
   padding: 20px;
   background: #1b1b2f;
+}
+
+.menu button {
+  margin: 0 5px;
+  background: transparent;
+  border: 2px solid #00ffe0;
+  padding: 5px 15px;
+  border-radius: 5px;
+  color: #00ffe0;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.menu button.active {
+  background: #00ffe0;
+  color: #1b1b2f;
 }
 
 .logout-btn {
@@ -48,7 +65,7 @@ body {
   cursor: pointer;
 }
 
-.inventory-section {
+.inventory-section, .services-section, .settings-section {
   padding: 20px;
 }
 
