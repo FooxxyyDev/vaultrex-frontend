@@ -7,8 +7,9 @@ function App() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [scanQty, setScanQty] = useState(1);
+  const [activeTab, setActiveTab] = useState("dashboard"); // Dashboard / Services / Settings
 
-  const API_URL = "https://vaultrex-backend.onrender.com"; // backend URL
+  const API_URL = "https://vaultrex-backend.onrender.com";
 
   // Login
   const handleLogin = async () => {
@@ -26,22 +27,20 @@ function App() {
     }
   };
 
-  // Logout
   const handleLogout = () => {
     setUser(null);
     setInventory([]);
     setEmail("");
     setPassword("");
+    setActiveTab("dashboard");
   };
 
-  // Fetch inventory
   const fetchInventory = async (userId) => {
     const res = await fetch(`${API_URL}/inventory/${userId}`);
     const data = await res.json();
     setInventory(data);
   };
 
-  // QR scan / dra av antal
   const handleScan = async (itemId) => {
     const res = await fetch(`${API_URL}/inventory/scan`, {
       method: "POST",
@@ -80,44 +79,64 @@ function App() {
   return (
     <div className="dashboard">
       <header>
-        <h1>Vaultrex Inventory</h1>
-        <button className="logout-btn" onClick={handleLogout}>
-          Logga ut
-        </button>
+        <h1>Vaultrex Dashboard</h1>
+        <div className="menu">
+          <button className={activeTab === "dashboard" ? "active" : ""} onClick={() => setActiveTab("dashboard")}>Dashboard</button>
+          <button className={activeTab === "services" ? "active" : ""} onClick={() => setActiveTab("services")}>Mina Tjänster</button>
+          <button className={activeTab === "settings" ? "active" : ""} onClick={() => setActiveTab("settings")}>Inställningar</button>
+        </div>
+        <button className="logout-btn" onClick={handleLogout}>Logga ut</button>
       </header>
 
-      <div className="inventory-section">
-        <h2>Dina artiklar</h2>
-        <label>
-          Scan quantity:
-          <input
-            type="number"
-            value={scanQty}
-            onChange={(e) => setScanQty(parseInt(e.target.value))}
-            min="1"
-          />
-        </label>
-        <table>
-          <thead>
-            <tr>
-              <th>Artikel</th>
-              <th>Antal</th>
-              <th>QR Scan</th>
-            </tr>
-          </thead>
-          <tbody>
-            {inventory.map((item) => (
-              <tr key={item.id}>
-                <td>{item.name}</td>
-                <td>{item.quantity}</td>
-                <td>
-                  <button onClick={() => handleScan(item.id)}>Scan QR</button>
-                </td>
+      {activeTab === "dashboard" && (
+        <div className="inventory-section">
+          <h2>Dina artiklar</h2>
+          <label>
+            Scan quantity:
+            <input
+              type="number"
+              value={scanQty}
+              onChange={(e) => setScanQty(parseInt(e.target.value))}
+              min="1"
+            />
+          </label>
+          <table>
+            <thead>
+              <tr>
+                <th>Artikel</th>
+                <th>Antal</th>
+                <th>QR Scan</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+            </thead>
+            <tbody>
+              {inventory.map((item) => (
+                <tr key={item.id}>
+                  <td>{item.name}</td>
+                  <td>{item.quantity}</td>
+                  <td>
+                    <button onClick={() => handleScan(item.id)}>Scan QR</button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+
+      {activeTab === "services" && (
+        <div className="services-section">
+          <h2>Mina Tjänster</h2>
+          <p>Här kan du abonnera på dina tjänster och se status.</p>
+          {/* Lägg till tjänster dynamiskt */}
+        </div>
+      )}
+
+      {activeTab === "settings" && (
+        <div className="settings-section">
+          <h2>Inställningar</h2>
+          <p>Här kan du ändra dina inställningar, lösenord etc.</p>
+        </div>
+      )}
     </div>
   );
 }
