@@ -1,7 +1,6 @@
-/* Grundinställningar */
 body {
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  background-color: #f0f2f5;
+  background-color: #f0f3f8;
   margin: 0;
   padding: 0;
 }
@@ -10,9 +9,9 @@ body {
   max-width: 900px;
   margin: 2rem auto;
   padding: 2rem;
-  background-color: #ffffff;
+  background: #ffffff;
   border-radius: 12px;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 8px 25px rgba(0,0,0,0.1);
 }
 
 h1, h2 {
@@ -21,27 +20,39 @@ h1, h2 {
   margin-bottom: 1rem;
 }
 
-/* Tabellstil */
-table {
-  width: 100%;
-  border-collapse: collapse;
+/* Kort-layout för items */
+.cards-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  justify-content: center;
   margin-bottom: 2rem;
 }
 
-table th, table td {
-  padding: 0.75rem 1rem;
-  text-align: left;
-  border-bottom: 1px solid #e0e0e0;
+.item-card {
+  background: #4caf50;
+  color: white;
+  padding: 1rem;
+  border-radius: 10px;
+  width: 200px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+  transition: transform 0.2s, box-shadow 0.2s;
 }
 
-table th {
-  background-color: #f7f7f7;
+.item-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+}
+
+.item-name {
+  font-size: 1.2rem;
   font-weight: 600;
+  margin-bottom: 0.5rem;
 }
 
-table tr:hover {
-  background-color: #f1f5f9;
-  transition: background-color 0.2s;
+.item-info span {
+  display: block;
+  font-size: 0.95rem;
 }
 
 /* Formulär */
@@ -65,12 +76,11 @@ table tr:hover {
   outline: none;
 }
 
-/* Knappstil */
 .item-form button {
   padding: 0.6rem 1.2rem;
   border-radius: 6px;
   border: none;
-  background-color: #4caf50;
+  background-color: #2196f3;
   color: white;
   font-weight: 600;
   cursor: pointer;
@@ -78,7 +88,7 @@ table tr:hover {
 }
 
 .item-form button:hover {
-  background-color: #45a049;
+  background-color: #1976d2;
   transform: translateY(-1px);
 }
 
@@ -89,7 +99,12 @@ table tr:hover {
     align-items: stretch;
   }
 
-  .item-form input {
-    width: 100%;
+  .cards-container {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .item-card {
+    width: 90%;
   }
 }
