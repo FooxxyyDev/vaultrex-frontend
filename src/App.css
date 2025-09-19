@@ -1,136 +1,48 @@
-/* === FUTURISTIC THEME === */
 body {
-  margin: 0;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
-  color: #e0e0e0;
-}
-
-/* === LOGIN PAGE === */
-.login-container {
+  font-family: 'Orbitron', sans-serif;
+  background: #0f0f1a;
+  color: #00ffea;
   display: flex;
   justify-content: center;
   align-items: center;
   height: 100vh;
+  margin: 0;
 }
 
-.login-card {
-  background: rgba(255, 255, 255, 0.05);
-  backdrop-filter: blur(8px);
-  padding: 30px 40px;
-  border-radius: 15px;
+.login-container, .dashboard {
+  background: #111126;
+  padding: 2rem;
+  border-radius: 12px;
+  box-shadow: 0 0 20px #00ffea;
+  width: 300px;
   text-align: center;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  box-shadow: 0 0 15px rgba(0, 255, 240, 0.2);
 }
 
-.login-card h1 {
-  color: #00fff0;
-  text-shadow: 0 0 10px #00fff0;
-  margin-bottom: 20px;
+input {
+  display: block;
+  margin: 1rem auto;
+  padding: 0.5rem;
+  width: 90%;
+  background: #222233;
+  border: 1px solid #00ffea;
+  color: #00ffea;
+  border-radius: 6px;
 }
 
-.login-card input {
-  width: 100%;
-  padding: 12px 15px;
-  margin-bottom: 15px;
-  border: 1px solid #00fff0;
-  border-radius: 5px;
-  background: transparent;
-  color: #e0e0e0;
-}
-
-.login-card input:focus {
-  outline: none;
-  border-color: #00fff0;
-  box-shadow: 0 0 10px #00fff0;
-}
-
-.login-card button {
-  background: #00fff0;
+button {
+  padding: 0.5rem 1rem;
   border: none;
-  color: #0f2027;
-  padding: 12px 25px;
-  border-radius: 5px;
+  border-radius: 6px;
+  background: #00ffea;
+  color: #111126;
   cursor: pointer;
   font-weight: bold;
-  transition: 0.3s;
 }
 
-.login-card button:hover {
-  background: #00c7b8;
+button:hover {
+  background: #00bfa1;
 }
 
-/* === DASHBOARD === */
-.dashboard {
-  display: flex;
-  flex-direction: column;
-  height: 100vh;
-}
-
-.header {
-  background: rgba(255, 255, 255, 0.05);
-  backdrop-filter: blur(8px);
-  padding: 20px;
-  text-align: center;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-.header h1 {
-  margin: 0;
-  font-size: 2rem;
-  color: #00fff0;
-  text-shadow: 0 0 10px #00fff0;
-}
-
-.nav {
-  margin-top: 10px;
-}
-
-.nav button {
-  background: transparent;
-  border: 1px solid #00fff0;
-  color: #00fff0;
-  padding: 10px 20px;
-  margin: 0 5px;
-  cursor: pointer;
-  border-radius: 5px;
-  transition: 0.3s;
-}
-
-.nav button:hover {
-  background: #00fff0;
-  color: #0f2027;
-}
-
-.nav button.active {
-  background: #00fff0;
-  color: #0f2027;
-}
-
-.content {
-  flex: 1;
-  padding: 30px;
-  display: flex;
-  justify-content: center;
-  align-items: flex-start;
-}
-
-.card {
-  background: rgba(255, 255, 255, 0.05);
-  backdrop-filter: blur(10px);
-  padding: 20px 30px;
-  border-radius: 15px;
-  max-width: 600px;
-  width: 100%;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-.card h2 {
-  margin-top: 0;
-  color: #00fff0;
-}
-
-.card p {
-  color: #cfcfcf;
+.error {
+  color: #ff4d4d;
 }
