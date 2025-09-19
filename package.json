@@ -8,10 +8,11 @@
     "build": "vite build",
     "serve": "vite preview"
   },
-  "dependencies": {
-    "react": "^18.3.0",
-    "react-dom": "^18.3.0"
-  },
+"dependencies": {
+  "react": "^18.2.0",
+  "react-dom": "^18.2.0",
+  "react-qr-reader": "^2.2.1"
+}
   "devDependencies": {
     "vite": "^4.5.14",
     "@vitejs/plugin-react": "^4.0.0"
