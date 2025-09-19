@@ -1,78 +1,82 @@
-import React, { useEffect, useState } from "react";
+import React, { useState, useEffect } from "react";
 import "./App.css";
 
 export default function App() {
   const [items, setItems] = useState([]);
-  const [newItem, setNewItem] = useState({ name: "", quantity: 0, category: "" });
+  const [name, setName] = useState("");
+  const [quantity, setQuantity] = useState("");
 
+  // Hämta inventory från backend
   useEffect(() => {
-    fetch("https://vaultrex-backend.onrender.com/api/items")
-      .then(res => res.json())
-      .then(data => setItems(data))
-      .catch(err => console.error(err));
+    fetch("https://vaultrex-backend.onrender.com/inventory")
+      .then((res) => res.json())
+      .then((data) => setItems(data))
+      .catch((err) => console.error("Error fetching inventory:", err));
   }, []);
 
+  // Lägg till nytt item
   const addItem = async (e) => {
     e.preventDefault();
-    if (!newItem.name || newItem.quantity <= 0 || !newItem.category) return;
+    if (!name || !quantity) return;
 
-    try {
-      const res = await fetch("https://vaultrex-backend.onrender.com/api/items", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(newItem)
-      });
-      const added = await res.json();
-      setItems([...items, added]);
-      setNewItem({ name: "", quantity: 0, category: "" });
-    } catch (err) {
-      console.error("Fel vid tillägg:", err);
+    const res = await fetch("https://vaultrex-backend.onrender.com/inventory", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ name, quantity: parseInt(quantity) }),
+    });
+
+    if (res.ok) {
+      const newItem = await res.json();
+      setItems([...items, newItem]);
+      setName("");
+      setQuantity("");
+    } else {
+      alert("Kunde inte lägga till item");
     }
   };
 
   return (
-    <div className="container">
-      <h1>Vaultrex Inventory</h1>
+    <div className="app-container">
+      <h1 className="title">Vaultrex Inventory</h1>
 
-      <div className="cards-container">
-        {items.length === 0 ? (
-          <p className="no-items">No items yet</p>
-        ) : (
-          items.map(item => (
-            <div className="item-card" key={item.id}>
-              <div className="item-name">{item.name}</div>
-              <div className="item-info">
-                <span>Qty: {item.quantity}</span>
-                <span>Category: {item.category}</span>
-              </div>
-            </div>
-          ))
-        )}
-      </div>
-
-      <h2>Add New Item</h2>
-      <form onSubmit={addItem} className="item-form">
+      <form className="item-form" onSubmit={addItem}>
         <input
-          placeholder="Name"
-          value={newItem.name}
-          onChange={e => setNewItem({ ...newItem, name: e.target.value })}
-          required
+          type="text"
+          placeholder="Item name"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
         />
         <input
           type="number"
           placeholder="Quantity"
-          value={newItem.quantity}
-          onChange={e => setNewItem({ ...newItem, quantity: Number(e.target.value) })}
-          required
-        />
-        <input
-          placeholder="Category"
-          value={newItem.category}
-          onChange={e => setNewItem({ ...newItem, category: e.target.value })}
-          required
+          value={quantity}
+          onChange={(e) => setQuantity(e.target.value)}
         />
         <button type="submit">Add Item</button>
       </form>
+
+      <div className="item-list">
+        {items.length === 0 ? (
+          <p>No items yet</p>
+        ) : (
+          <table>
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Quantity</th>
+              </tr>
+            </thead>
+            <tbody>
+              {items.map((item) => (
+                <tr key={item.id}>
+                  <td>{item.name}</td>
+                  <td>{item.quantity}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
+      </div>
     </div>
   );
 }
