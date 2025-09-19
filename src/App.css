@@ -1,48 +1,115 @@
+/* =======================
+   Futuristic Vaultrex Dashboard
+   ======================= */
+
 body {
-  font-family: 'Orbitron', sans-serif;
-  background: #0f0f1a;
-  color: #00ffea;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
-  margin: 0;
+    margin: 0;
+    padding: 0;
+    font-family: 'Orbitron', sans-serif;
+    background: #0d0d1a;
+    color: #00ffe0;
 }
 
-.login-container, .dashboard {
-  background: #111126;
-  padding: 2rem;
-  border-radius: 12px;
-  box-shadow: 0 0 20px #00ffea;
-  width: 300px;
-  text-align: center;
+h1, h2, h3 {
+    color: #00ffe0;
 }
 
-input {
-  display: block;
-  margin: 1rem auto;
-  padding: 0.5rem;
-  width: 90%;
-  background: #222233;
-  border: 1px solid #00ffea;
-  color: #00ffea;
-  border-radius: 6px;
+.login-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background: linear-gradient(135deg, #0a0a12, #1a1a2e);
 }
 
-button {
-  padding: 0.5rem 1rem;
-  border: none;
-  border-radius: 6px;
-  background: #00ffea;
-  color: #111126;
-  cursor: pointer;
-  font-weight: bold;
+.login-container input {
+    margin: 0.5rem 0;
+    padding: 0.7rem 1rem;
+    width: 250px;
+    border-radius: 6px;
+    border: 1px solid #00ffe0;
+    background: #111126;
+    color: #00ffe0;
+    font-size: 1rem;
 }
 
-button:hover {
-  background: #00bfa1;
+.login-container button {
+    margin-top: 1rem;
+    padding: 0.7rem 1.2rem;
+    border: none;
+    border-radius: 6px;
+    background: #00ffe0;
+    color: #0d0d1a;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.login-container button:hover {
+    background: #00d4b8;
 }
 
 .error {
-  color: #ff4d4d;
+    color: #ff0033;
+    margin-bottom: 0.5rem;
+}
+
+.dashboard {
+    padding: 2rem;
+}
+
+.dashboard button {
+    padding: 0.5rem 1rem;
+    margin: 1rem 0;
+    border-radius: 6px;
+    border: none;
+    background: #00ffe0;
+    color: #0d0d1a;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.dashboard button:hover {
+    background: #00d4b8;
+}
+
+ul {
+    list-style: none;
+    padding: 0;
+}
+
+li {
+    margin: 0.5rem 0;
+    padding: 0.5rem 0.8rem;
+    background: #111126;
+    border: 1px solid #00ffe0;
+    border-radius: 6px;
+    display: flex;
+    justify-content: space-between;
+}
+
+.qr-reader {
+    margin: 1rem 0;
+    border: 2px solid #00ffe0;
+    border-radius: 6px;
+    padding: 0.5rem;
+}
+
+/* Future hover effect */
+li:hover {
+    background: #0a0a12;
+    border-color: #00d4b8;
+}
+
+/* Responsive for mobile */
+@media (max-width: 600px) {
+    .login-container input {
+        width: 200px;
+    }
+
+    .dashboard {
+        padding: 1rem;
+    }
 }
