@@ -1,5 +1,4 @@
-/* Futuristic dashboard theme */
-
+/* === FUTURISTIC THEME === */
 body {
   margin: 0;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -7,6 +6,62 @@ body {
   color: #e0e0e0;
 }
 
+/* === LOGIN PAGE === */
+.login-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+.login-card {
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(8px);
+  padding: 30px 40px;
+  border-radius: 15px;
+  text-align: center;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 0 15px rgba(0, 255, 240, 0.2);
+}
+
+.login-card h1 {
+  color: #00fff0;
+  text-shadow: 0 0 10px #00fff0;
+  margin-bottom: 20px;
+}
+
+.login-card input {
+  width: 100%;
+  padding: 12px 15px;
+  margin-bottom: 15px;
+  border: 1px solid #00fff0;
+  border-radius: 5px;
+  background: transparent;
+  color: #e0e0e0;
+}
+
+.login-card input:focus {
+  outline: none;
+  border-color: #00fff0;
+  box-shadow: 0 0 10px #00fff0;
+}
+
+.login-card button {
+  background: #00fff0;
+  border: none;
+  color: #0f2027;
+  padding: 12px 25px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: 0.3s;
+}
+
+.login-card button:hover {
+  background: #00c7b8;
+}
+
+/* === DASHBOARD === */
 .dashboard {
   display: flex;
   flex-direction: column;
