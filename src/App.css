@@ -1,59 +1,55 @@
-/* --- Grundinställningar --- */
-* {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-  font-family: 'Orbitron', sans-serif; /* futuristiskt typsnitt */
-}
-
+/* Grundlayout */
 body {
-  background-color: #0a0f1c;
-  color: #e0e0e0;
+  margin: 0;
+  font-family: "Orbitron", sans-serif;
+  background-color: #0f0f1a;
+  color: #e0e0ff;
 }
 
-/* --- Login-sida --- */
+h1, h2 {
+  color: #00fff7;
+}
+
+/* Login */
 .login-container {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   height: 100vh;
-  background: linear-gradient(135deg, #0a0f1c, #1f1f3f);
 }
 
-.login-container h1 {
-  margin-bottom: 2rem;
-  color: #00ffe0;
-  text-shadow: 0 0 10px #00ffe0;
+.login-container form {
+  display: flex;
+  flex-direction: column;
+  width: 300px;
 }
 
 .login-container input {
-  width: 250px;
-  margin: 0.5rem 0;
-  padding: 0.5rem;
+  margin: 10px 0;
+  padding: 10px;
+  border: 2px solid #00fff7;
   border-radius: 5px;
-  border: none;
-  outline: none;
+  background-color: #1a1a2e;
+  color: #e0e0ff;
 }
 
 .login-container button {
-  margin-top: 1rem;
-  padding: 0.5rem 2rem;
-  background-color: #00ffe0;
+  padding: 10px;
+  background-color: #00fff7;
   border: none;
   border-radius: 5px;
-  color: #0a0f1c;
-  font-weight: bold;
   cursor: pointer;
-  transition: all 0.3s ease;
+  font-weight: bold;
+  color: #0f0f1a;
+  transition: background-color 0.3s;
 }
 
 .login-container button:hover {
-  background-color: #00b3a0;
-  transform: scale(1.05);
+  background-color: #00b0aa;
 }
 
-/* --- Dashboard --- */
+/* Dashboard */
 .dashboard {
   display: flex;
   flex-direction: column;
@@ -64,118 +60,103 @@ header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 1rem 2rem;
-  background-color: #11172a;
-  border-bottom: 1px solid #00ffe0;
-}
-
-header h1 {
-  color: #00ffe0;
-  text-shadow: 0 0 5px #00ffe0;
+  padding: 15px 30px;
+  background: linear-gradient(90deg, #0f0f1a, #1a1a2e);
+  border-bottom: 2px solid #00fff7;
 }
 
 header button {
-  padding: 0.5rem 1rem;
+  padding: 8px 16px;
+  background-color: #ff007f;
   border: none;
   border-radius: 5px;
-  background-color: #00ffe0;
-  color: #11172a;
+  color: #fff;
   cursor: pointer;
-  transition: all 0.3s ease;
 }
 
 header button:hover {
-  background-color: #00b3a0;
+  background-color: #ff1fc3;
 }
 
-/* --- Navigeringsflikar --- */
+/* Navigering / flikar */
 nav {
   display: flex;
-  background-color: #11172a;
-  border-bottom: 1px solid #00ffe0;
+  background-color: #1a1a2e;
+  border-bottom: 2px solid #00fff7;
 }
 
 nav button {
   flex: 1;
-  padding: 1rem;
+  padding: 15px;
   background: none;
   border: none;
-  color: #e0e0e0;
+  color: #e0e0ff;
   cursor: pointer;
-  transition: all 0.3s ease;
-}
-
-nav button:hover,
-nav button:focus,
-nav button.active {
-  background-color: #00ffe0;
-  color: #11172a;
   font-weight: bold;
-  text-shadow: 0 0 5px #00ffe0;
+  transition: background-color 0.3s;
 }
 
-/* --- Huvudinnehåll --- */
+nav button.active, nav button:hover {
+  background-color: #00fff7;
+  color: #0f0f1a;
+}
+
+/* Huvudinnehåll */
 main {
   flex: 1;
-  padding: 2rem;
+  padding: 20px;
+  background-color: #0f0f1a;
 }
 
-/* --- Inventory & Services --- */
-.inventory, .services, .settings {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-}
-
+/* Inventory */
 .inventory-item, .service-item {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 0.7rem 1rem;
-  background-color: #1f1f3f;
+  padding: 12px;
+  margin: 10px 0;
+  background-color: #1a1a2e;
+  border-left: 4px solid #00fff7;
   border-radius: 5px;
-  box-shadow: 0 0 10px rgba(0,255,224,0.3);
-  transition: all 0.3s ease;
 }
 
-.inventory-item:hover, .service-item:hover {
-  transform: scale(1.02);
-  box-shadow: 0 0 15px rgba(0,255,224,0.6);
-}
-
-.inventory-item button {
-  padding: 0.3rem 0.8rem;
+.inventory-item button, .service-item button {
+  background-color: #00fff7;
   border: none;
   border-radius: 5px;
-  background-color: #00ffe0;
-  color: #11172a;
+  padding: 6px 12px;
   cursor: pointer;
-  transition: all 0.3s ease;
+  font-weight: bold;
+  color: #0f0f1a;
+  transition: background-color 0.3s;
 }
 
-.inventory-item button:hover {
-  background-color: #00b3a0;
+.inventory-item button:hover, .service-item button:hover {
+  background-color: #00b0aa;
 }
 
-/* --- Settings --- */
+/* Inställningar */
 .settings input {
-  padding: 0.5rem;
+  display: block;
+  margin: 10px 0;
+  padding: 10px;
+  border: 2px solid #00fff7;
   border-radius: 5px;
-  border: none;
-  width: 250px;
+  background-color: #1a1a2e;
+  color: #e0e0ff;
 }
 
 .settings button {
-  margin-top: 0.5rem;
-  padding: 0.5rem 1rem;
+  margin-top: 10px;
+  padding: 10px;
+  background-color: #ff007f;
   border: none;
   border-radius: 5px;
-  background-color: #00ffe0;
-  color: #11172a;
+  color: #fff;
+  font-weight: bold;
   cursor: pointer;
-  transition: all 0.3s ease;
 }
 
 .settings button:hover {
-  background-color: #00b3a0;
+  background-color: #ff1fc3;
 }
