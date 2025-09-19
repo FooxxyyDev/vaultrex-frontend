@@ -1,77 +1,125 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "./App.css";
 
-export default function App() {
-  const [activeTab, setActiveTab] = useState("home");
+function App() {
   const [user, setUser] = useState(null);
+  const [inventory, setInventory] = useState([]);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [scanQty, setScanQty] = useState(1);
 
-  const handleLogin = (e) => {
-    e.preventDefault();
-    // Här ska du koppla mot backend login
-    if (email === "admin@vaultrex.se" && password === "Leary30!") {
-      setUser({ email });
+  const API_URL = "https://vaultrex-backend.onrender.com"; // backend URL
+
+  // Login
+  const handleLogin = async () => {
+    const res = await fetch(`${API_URL}/login`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email, password }),
+    });
+    const data = await res.json();
+    if (data.success) {
+      setUser(data.user);
+      fetchInventory(data.user.id);
     } else {
-      alert("Fel e-post eller lösenord");
+      alert(data.message || "Fel inloggning");
     }
   };
 
-  const renderContent = () => {
-    if (!user) {
-      return (
-        <div className="login-box">
-          <h2>Login</h2>
-          <form onSubmit={handleLogin}>
-            <input
-              type="email"
-              placeholder="Email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-            />
-            <input
-              type="password"
-              placeholder="Password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-            />
-            <button type="submit">Login</button>
-          </form>
-        </div>
+  // Logout
+  const handleLogout = () => {
+    setUser(null);
+    setInventory([]);
+    setEmail("");
+    setPassword("");
+  };
+
+  // Fetch inventory
+  const fetchInventory = async (userId) => {
+    const res = await fetch(`${API_URL}/inventory/${userId}`);
+    const data = await res.json();
+    setInventory(data);
+  };
+
+  // QR scan / dra av antal
+  const handleScan = async (itemId) => {
+    const res = await fetch(`${API_URL}/inventory/scan`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ itemId, quantity: scanQty }),
+    });
+    const data = await res.json();
+    if (data.success) {
+      setInventory((prev) =>
+        prev.map((i) => (i.id === itemId ? { ...i, quantity: data.newQuantity } : i))
       );
     }
-
-    switch (activeTab) {
-      case "home":
-        return <div className="tab-content">Välkommen till Vaultrex Dashboard!</div>;
-      case "inventory":
-        return <div className="tab-content">Här ser du inventory. (Kommande: QR scanning)</div>;
-      case "subscriptions":
-        return <div className="tab-content">Här ser du dina abonnemang.</div>;
-      case "settings":
-        return <div className="tab-content">Inställningar för kontot.</div>;
-      default:
-        return null;
-    }
   };
 
+  if (!user) {
+    return (
+      <div className="login-container">
+        <h2>Vaultrex Login</h2>
+        <input
+          type="email"
+          placeholder="E-post"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+        />
+        <input
+          type="password"
+          placeholder="Lösenord"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+        />
+        <button onClick={handleLogin}>Logga in</button>
+      </div>
+    );
+  }
+
   return (
-    <div className="app-container">
+    <div className="dashboard">
       <header>
-        <h1>Vaultrex Dashboard</h1>
-        {user && (
-          <nav>
-            <button onClick={() => setActiveTab("home")}>Home</button>
-            <button onClick={() => setActiveTab("inventory")}>Inventory</button>
-            <button onClick={() => setActiveTab("subscriptions")}>Subscriptions</button>
-            <button onClick={() => setActiveTab("settings")}>Settings</button>
-            <button onClick={() => setUser(null)}>Logout</button>
-          </nav>
-        )}
+        <h1>Vaultrex Inventory</h1>
+        <button className="logout-btn" onClick={handleLogout}>
+          Logga ut
+        </button>
       </header>
-      <main>{renderContent()}</main>
+
+      <div className="inventory-section">
+        <h2>Dina artiklar</h2>
+        <label>
+          Scan quantity:
+          <input
+            type="number"
+            value={scanQty}
+            onChange={(e) => setScanQty(parseInt(e.target.value))}
+            min="1"
+          />
+        </label>
+        <table>
+          <thead>
+            <tr>
+              <th>Artikel</th>
+              <th>Antal</th>
+              <th>QR Scan</th>
+            </tr>
+          </thead>
+          <tbody>
+            {inventory.map((item) => (
+              <tr key={item.id}>
+                <td>{item.name}</td>
+                <td>{item.quantity}</td>
+                <td>
+                  <button onClick={() => handleScan(item.id)}>Scan QR</button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 }
+
+export default App;
