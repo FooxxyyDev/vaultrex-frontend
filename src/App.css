@@ -1,8 +1,8 @@
 body {
   margin: 0;
-  font-family: "Orbitron", sans-serif;
-  background: #0f0f1f;
-  color: #00ffea;
+  font-family: 'Orbitron', sans-serif;
+  background: #0f0f1a;
+  color: #00ffe0;
 }
 
 .login-container {
@@ -14,83 +14,51 @@ body {
 }
 
 .login-container input {
-  margin: 8px 0;
+  margin: 10px;
   padding: 10px;
-  width: 250px;
-  border-radius: 5px;
   border: none;
-  outline: none;
+  border-radius: 5px;
+  width: 250px;
+  background: #1a1a2e;
+  color: #00ffe0;
 }
 
 .login-container button {
   padding: 10px 20px;
-  margin-top: 10px;
-  background: #00ffea;
-  color: #0f0f1f;
   border: none;
   border-radius: 5px;
+  background: #00ffe0;
+  color: #0f0f1a;
   cursor: pointer;
   font-weight: bold;
 }
 
-.login-container button:hover {
-  background: #00ccba;
-}
-
-.app-container {
+.dashboard {
   padding: 20px;
 }
 
-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-nav button {
-  margin-left: 10px;
+.tabs button {
+  margin-right: 10px;
   padding: 10px 15px;
   background: #1a1a2e;
+  color: #00ffe0;
   border: none;
   border-radius: 5px;
-  color: #00ffea;
   cursor: pointer;
 }
 
-nav button:hover {
-  background: #00ffea;
-  color: #0f0f1f;
+.tabs button.active {
+  background: #00ffe0;
+  color: #0f0f1a;
 }
 
-main {
+.inventory-list, .services-list {
   margin-top: 20px;
 }
 
-table {
-  width: 100%;
-  border-collapse: collapse;
-}
-
-table th, table td {
-  border: 1px solid #00ffea;
-  padding: 8px;
-  text-align: center;
-}
-
-table th {
+.inventory-item, .service-item {
+  padding: 10px;
+  margin: 5px 0;
   background: #1a1a2e;
-}
-
-button {
-  cursor: pointer;
-  padding: 5px 10px;
-  border-radius: 4px;
-  border: none;
-  background: #00ffea;
-  color: #0f0f1f;
-  font-weight: bold;
-}
-
-button:hover {
-  background: #00ccba;
+  border-radius: 5px;
 }
