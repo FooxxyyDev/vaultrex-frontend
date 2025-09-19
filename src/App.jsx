@@ -1,118 +1,91 @@
 import React, { useState, useEffect } from "react";
 import "./App.css";
 
-export default function App() {
+function App() {
+  const [user, setUser] = useState(null);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [user, setUser] = useState(null);
   const [inventory, setInventory] = useState([]);
   const [services, setServices] = useState([]);
+  const [activeTab, setActiveTab] = useState("inventory");
 
-  const backendURL = "https://vaultrex-backend.onrender.com";
-
-  // ----- LOGIN -----
-  const handleLogin = async (e) => {
-    e.preventDefault();
-    const res = await fetch(`${backendURL}/login`, {
+  const login = async () => {
+    const res = await fetch("https://vaultrex-backend.onrender.com/login", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email, password }),
     });
-    const data = await res.json();
     if (res.ok) {
+      const data = await res.json();
       setUser(data.user);
       fetchInventory(data.user.id);
       fetchServices();
     } else {
-      alert(data.message);
+      alert("Invalid login");
     }
   };
 
-  // ----- FETCH INVENTORY -----
   const fetchInventory = async (userId) => {
-    const res = await fetch(`${backendURL}/inventory/${userId}`);
+    const res = await fetch(`https://vaultrex-backend.onrender.com/inventory/${userId}`);
     const data = await res.json();
     setInventory(data);
   };
 
-  // ----- FETCH SERVICES -----
   const fetchServices = async () => {
-    const res = await fetch(`${backendURL}/services`);
+    const res = await fetch("https://vaultrex-backend.onrender.com/services");
     const data = await res.json();
     setServices(data);
   };
 
-  // ----- SUBSCRIBE -----
-  const subscribeService = async (serviceId) => {
-    const res = await fetch(`${backendURL}/subscribe`, {
+  const subscribe = async (serviceId) => {
+    const res = await fetch("https://vaultrex-backend.onrender.com/subscribe", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ userId: user.id, serviceId }),
     });
-    const data = await res.json();
-    alert(data.message);
+    if (res.ok) alert("Subscribed!");
   };
 
+  if (!user) {
+    return (
+      <div className="login-container">
+        <h1>Vaultrex Login</h1>
+        <input type="email" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} />
+        <input type="password" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} />
+        <button onClick={login}>Login</button>
+      </div>
+    );
+  }
+
   return (
-    <div className="app-container">
-      {!user ? (
-        <div className="login-panel">
-          <h2>Login</h2>
-          <form onSubmit={handleLogin}>
-            <input
-              type="email"
-              placeholder="Email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-            />
-            <input
-              type="password"
-              placeholder="Password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-            />
-            <button type="submit">Login</button>
-          </form>
-        </div>
-      ) : (
-        <div className="dashboard">
-          <h2>Welcome, {user.email}</h2>
-
-          <section className="inventory-section">
-            <h3>Inventory</h3>
-            <table>
-              <thead>
-                <tr>
-                  <th>Name</th>
-                  <th>Quantity</th>
-                </tr>
-              </thead>
-              <tbody>
-                {inventory.map((item) => (
-                  <tr key={item.id}>
-                    <td>{item.name}</td>
-                    <td>{item.quantity}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </section>
-
-          <section className="services-section">
-            <h3>Services</h3>
-            <ul>
-              {services.map((s) => (
-                <li key={s.id}>
-                  {s.name} (${s.price}){" "}
-                  <button onClick={() => subscribeService(s.id)}>Subscribe</button>
-                </li>
-              ))}
-            </ul>
-          </section>
-        </div>
-      )}
+    <div className="dashboard">
+      <h1>Welcome, {user.email}</h1>
+      <div className="tabs">
+        <button onClick={() => setActiveTab("inventory")} className={activeTab === "inventory" ? "active" : ""}>Inventory</button>
+        <button onClick={() => setActiveTab("services")} className={activeTab === "services" ? "active" : ""}>Services</button>
+      </div>
+      <div className="tab-content">
+        {activeTab === "inventory" && (
+          <div className="inventory-list">
+            {inventory.map((item) => (
+              <div key={item.id} className="inventory-item">
+                {item.name} - Quantity: {item.quantity}
+              </div>
+            ))}
+          </div>
+        )}
+        {activeTab === "services" && (
+          <div className="services-list">
+            {services.map((s) => (
+              <div key={s.id} className="service-item">
+                {s.name} - ${s.price} <button onClick={() => subscribe(s.id)}>Subscribe</button>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
     </div>
   );
 }
+
+export default App;
