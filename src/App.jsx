@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from "react";
+import "./App.css"; // CSS för layout och styling
 
 export default function App() {
   const [items, setItems] = useState([]);
   const [newItem, setNewItem] = useState({ name: "", quantity: 0, category: "" });
 
-  // Fetcha items från backend när sidan laddas
+  // Hämta items från backend när sidan laddas
   useEffect(() => {
     fetch("https://vaultrex-backend.onrender.com/api/items")
       .then(res => res.json())
@@ -12,30 +13,56 @@ export default function App() {
       .catch(err => console.error("Fel vid hämtning:", err));
   }, []);
 
+  // Lägg till nytt item
+  const addItem = async (e) => {
+    e.preventDefault();
+    if (!newItem.name || newItem.quantity <= 0 || !newItem.category) return;
+
+    try {
+      const res = await fetch("https://vaultrex-backend.onrender.com/api/items", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(newItem)
+      });
+      const added = await res.json();
+      setItems([...items, added]); // Lägg till direkt i listan
+      setNewItem({ name: "", quantity: 0, category: "" }); // nollställ formulär
+    } catch (err) {
+      console.error("Fel vid tillägg:", err);
+    }
+  };
+
   return (
-    <div style={{ padding: "2rem", fontFamily: "sans-serif" }}>
+    <div className="container">
       <h1>Vaultrex Inventory</h1>
 
-      <ul>
-        {items.map(item => (
-          <li key={item.id}>
-            {item.name} – {item.quantity} – {item.category}
-          </li>
-        ))}
-      </ul>
+      <table>
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Quantity</th>
+            <th>Category</th>
+          </tr>
+        </thead>
+        <tbody>
+          {items.length === 0 ? (
+            <tr>
+              <td colSpan="3" style={{ textAlign: "center" }}>No items yet</td>
+            </tr>
+          ) : (
+            items.map(item => (
+              <tr key={item.id}>
+                <td>{item.name}</td>
+                <td>{item.quantity}</td>
+                <td>{item.category}</td>
+              </tr>
+            ))
+          )}
+        </tbody>
+      </table>
 
-      <h2>Add new item</h2>
-      <form onSubmit={async (e) => {
-        e.preventDefault();
-        const res = await fetch("https://vaultrex-backend.onrender.com/api/items", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(newItem)
-        });
-        const added = await res.json();
-        setItems([...items, added]); // Lägg till direkt i listan
-        setNewItem({ name: "", quantity: 0, category: "" }); // nollställ formulär
-      }}>
+      <h2>Add New Item</h2>
+      <form onSubmit={addItem} className="item-form">
         <input
           placeholder="Name"
           value={newItem.name}
