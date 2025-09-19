@@ -1,0 +1,95 @@
+/* Grundinställningar */
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #f0f2f5;
+  margin: 0;
+  padding: 0;
+}
+
+.container {
+  max-width: 900px;
+  margin: 2rem auto;
+  padding: 2rem;
+  background-color: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+}
+
+h1, h2 {
+  text-align: center;
+  color: #333;
+  margin-bottom: 1rem;
+}
+
+/* Tabellstil */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 2rem;
+}
+
+table th, table td {
+  padding: 0.75rem 1rem;
+  text-align: left;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+table th {
+  background-color: #f7f7f7;
+  font-weight: 600;
+}
+
+table tr:hover {
+  background-color: #f1f5f9;
+  transition: background-color 0.2s;
+}
+
+/* Formulär */
+.item-form {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  justify-content: center;
+}
+
+.item-form input {
+  padding: 0.5rem 0.75rem;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  min-width: 150px;
+  transition: border 0.2s;
+}
+
+.item-form input:focus {
+  border-color: #4caf50;
+  outline: none;
+}
+
+/* Knappstil */
+.item-form button {
+  padding: 0.6rem 1.2rem;
+  border-radius: 6px;
+  border: none;
+  background-color: #4caf50;
+  color: white;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s, transform 0.1s;
+}
+
+.item-form button:hover {
+  background-color: #45a049;
+  transform: translateY(-1px);
+}
+
+/* Mobilanpassning */
+@media (max-width: 600px) {
+  .item-form {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .item-form input {
+    width: 100%;
+  }
+}
