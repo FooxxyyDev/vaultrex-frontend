@@ -3,100 +3,82 @@ import "./App.css";
 
 export default function App() {
   const [user, setUser] = useState(null);
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [activeTab, setActiveTab] = useState("inventory");
   const [inventory, setInventory] = useState([]);
   const [services, setServices] = useState([]);
-  const [newPassword, setNewPassword] = useState("");
-  const [activeTab, setActiveTab] = useState("inventory");
+  const [loginData, setLoginData] = useState({ email: "", password: "" });
 
-  const API = "https://vaultrex-backend.onrender.com";
+  // --- Hämta inventory och services när användare loggar in ---
+  useEffect(() => {
+    if (user) {
+      fetch("/api/inventory")
+        .then(res => res.json())
+        .then(data => setInventory(data))
+        .catch(console.error);
 
-  // --- LOGIN ---
-  const handleLogin = async () => {
-    const res = await fetch(`${API}/login`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email, password }),
-    });
-    const data = await res.json();
-    if (data.success) {
-      setUser(data.user);
-      fetchInventory(data.user.id);
-      fetchServices(data.user.id);
-    } else {
-      alert("Fel e-post eller lösenord");
+      fetch("/api/services")
+        .then(res => res.json())
+        .then(data => setServices(data))
+        .catch(console.error);
     }
-  };
+  }, [user]);
 
-  // --- LOGOUT ---
-  const handleLogout = () => {
-    setUser(null);
-    setEmail("");
-    setPassword("");
-    setInventory([]);
-    setServices([]);
-  };
-
-  // --- FETCH INVENTORY ---
-  const fetchInventory = async (userId) => {
-    const res = await fetch(`${API}/inventory/${userId}`);
-    const data = await res.json();
-    setInventory(data);
-  };
-
-  // --- QR-SCAN (minska antal) ---
-  const handleScan = async (itemId) => {
-    const qty = parseInt(prompt("Hur många ska dras av?"), 10);
-    if (isNaN(qty) || qty <= 0) return;
-    const res = await fetch(`${API}/inventory/scan`, {
+  // --- Inloggning ---
+  const handleLogin = (e) => {
+    e.preventDefault();
+    fetch("/api/login", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ itemId, quantity: qty }),
-    });
-    const data = await res.json();
-    if (data.success) fetchInventory(user.id);
-    else alert("Fel vid uppdatering");
+      body: JSON.stringify(loginData)
+    })
+      .then(res => res.json())
+      .then(data => {
+        if (data.success) setUser(data.user);
+        else alert("Fel användarnamn eller lösenord!");
+      })
+      .catch(console.error);
   };
 
-  // --- FETCH SERVICES ---
-  const fetchServices = async (userId) => {
-    const res = await fetch(`${API}/services/${userId}`);
-    const data = await res.json();
-    setServices(data);
+  // --- Logga ut ---
+  const handleLogout = () => setUser(null);
+
+  // --- QR-skanning (mock) ---
+  const handleScanQR = () => {
+    const itemId = prompt("Skanna QR-kod / Ange artikel ID:");
+    if (!itemId) return;
+    fetch(`/api/inventory/scan/${itemId}`, { method: "POST" })
+      .then(res => res.json())
+      .then(data => {
+        alert(data.message);
+        // Uppdatera inventory
+        fetch("/api/inventory")
+          .then(res => res.json())
+          .then(setInventory);
+      })
+      .catch(console.error);
   };
 
-  // --- UPDATE PASSWORD ---
-  const handlePasswordChange = async () => {
-    const res = await fetch(`${API}/settings/password`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ userId: user.id, newPassword }),
-    });
-    const data = await res.json();
-    if (data.success) alert("Lösenord uppdaterat");
-    else alert("Fel vid uppdatering");
-    setNewPassword("");
-  };
-
-  // --- RENDER ---
   if (!user) {
     return (
       <div className="login-container">
         <h1>Vaultrex Login</h1>
-        <input
-          type="email"
-          placeholder="E-post"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-        />
-        <input
-          type="password"
-          placeholder="Lösenord"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-        />
-        <button onClick={handleLogin}>Logga in</button>
+        <form onSubmit={handleLogin}>
+          <input
+            type="email"
+            placeholder="Email"
+            value={loginData.email}
+            onChange={e => setLoginData({...loginData, email: e.target.value})}
+            required
+          />
+          <input
+            type="password"
+            placeholder="Password"
+            value={loginData.password}
+            onChange={e => setLoginData({...loginData, password: e.target.value})}
+            required
+          />
+          <button type="submit">Logga in</button>
+        </form>
       </div>
     );
   }
@@ -109,19 +91,34 @@ export default function App() {
       </header>
 
       <nav>
-        <button onClick={() => setActiveTab("inventory")}>Inventory</button>
-        <button onClick={() => setActiveTab("services")}>Mina tjänster</button>
-        <button onClick={() => setActiveTab("settings")}>Inställningar</button>
+        <button
+          className={activeTab === "inventory" ? "active" : ""}
+          onClick={() => setActiveTab("inventory")}
+        >
+          Inventory
+        </button>
+        <button
+          className={activeTab === "services" ? "active" : ""}
+          onClick={() => setActiveTab("services")}
+        >
+          Services
+        </button>
+        <button
+          className={activeTab === "settings" ? "active" : ""}
+          onClick={() => setActiveTab("settings")}
+        >
+          Settings
+        </button>
       </nav>
 
       <main>
         {activeTab === "inventory" && (
           <div className="inventory">
-            <h2>Inventory</h2>
-            {inventory.map((item) => (
+            <button onClick={handleScanQR}>Scan QR / Dra artikel</button>
+            {inventory.map(item => (
               <div key={item.id} className="inventory-item">
-                <span>{item.name} - {item.quantity}</span>
-                <button onClick={() => handleScan(item.id)}>Scan QR</button>
+                <span>{item.name} (Antal: {item.quantity})</span>
+                <button onClick={() => alert(`Redigera ${item.name}`)}>Redigera</button>
               </div>
             ))}
           </div>
@@ -129,10 +126,10 @@ export default function App() {
 
         {activeTab === "services" && (
           <div className="services">
-            <h2>Mina tjänster</h2>
-            {services.map((s) => (
-              <div key={s.id} className="service-item">
-                <span>{s.name} - {s.status}</span>
+            {services.map(service => (
+              <div key={service.id} className="service-item">
+                <span>{service.name}</span>
+                <button onClick={() => alert(`Abonnera på ${service.name}`)}>Abonnera</button>
               </div>
             ))}
           </div>
@@ -141,13 +138,9 @@ export default function App() {
         {activeTab === "settings" && (
           <div className="settings">
             <h2>Inställningar</h2>
-            <input
-              type="password"
-              placeholder="Nytt lösenord"
-              value={newPassword}
-              onChange={(e) => setNewPassword(e.target.value)}
-            />
-            <button onClick={handlePasswordChange}>Byt lösenord</button>
+            <input type="text" placeholder="Ändra e-mail" />
+            <input type="password" placeholder="Ändra lösenord" />
+            <button>Uppdatera konto</button>
           </div>
         )}
       </main>
