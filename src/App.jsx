@@ -1,7 +1,9 @@
-import React from "react";
+import React from 'react';
 
 export default function App() {
     return (
-        <div>Hello Vaultrex!</div>
+        <div>
+            <h1>Hello Vaultrex!</h1>
+        </div>
     );
 }
