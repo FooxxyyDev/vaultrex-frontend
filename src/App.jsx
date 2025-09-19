@@ -1,102 +1,137 @@
 import React, { useState, useEffect } from "react";
 import "./App.css";
-import QrReader from "react-qr-reader";
 
 export default function App() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [user, setUser] = useState(null);
-  const [inventory, setInventory] = useState([]);
-  const [message, setMessage] = useState("");
-  const [scanning, setScanning] = useState(false);
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
+    const [user, setUser] = useState(null);
+    const [inventory, setInventory] = useState([]);
+    const [services, setServices] = useState([]);
+    const [activeTab, setActiveTab] = useState("inventory");
+    const [error, setError] = useState("");
 
-  const BACKEND_URL = "https://vaultrex-backend.onrender.com";
+    // ---------- LOGIN ----------
+    const handleLogin = async () => {
+        setError("");
+        try {
+            const res = await fetch("https://vaultrex-backend.onrender.com/login", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ email, password }),
+            });
+            const data = await res.json();
+            if (res.ok) {
+                setUser(data.user);
+                fetchInventory(data.user.id);
+                fetchServices();
+            } else {
+                setError(data.message || "Login failed");
+            }
+        } catch (err) {
+            setError("Server error");
+        }
+    };
 
-  // LOGIN
-  const login = async () => {
-    const res = await fetch(`${BACKEND_URL}/api/login`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email, password })
-    });
-    const data = await res.json();
-    if (data.success) {
-      setUser(data.user);
-      fetchInventory(data.user.id);
-    } else {
-      setMessage(data.message || "Fel inloggning");
-    }
-  };
+    // ---------- FETCH INVENTORY ----------
+    const fetchInventory = async (userId) => {
+        try {
+            const res = await fetch(`https://vaultrex-backend.onrender.com/inventory/${userId}`);
+            const data = await res.json();
+            if (res.ok) setInventory(data);
+        } catch (err) {
+            console.error(err);
+        }
+    };
 
-  // Hämta inventory
-  const fetchInventory = async (userId) => {
-    const res = await fetch(`${BACKEND_URL}/api/inventory/${userId}`);
-    const data = await res.json();
-    if (data.success) setInventory(data.items);
-  };
+    // ---------- FETCH SERVICES ----------
+    const fetchServices = async () => {
+        try {
+            const res = await fetch("https://vaultrex-backend.onrender.com/services");
+            const data = await res.json();
+            if (res.ok) setServices(data);
+        } catch (err) {
+            console.error(err);
+        }
+    };
 
-  // QR-scan
-  const handleScan = async (data) => {
-    if (data) {
-      const itemId = parseInt(data);
-      const res = await fetch(`${BACKEND_URL}/api/inventory/use`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ itemId, amount: 1 })
-      });
-      const result = await res.json();
-      if (result.success) {
-        setInventory((prev) =>
-          prev.map((item) =>
-            item.id === itemId ? { ...item, quantity: result.item.quantity } : item
-          )
+    // ---------- SUBSCRIBE TO SERVICE ----------
+    const subscribeService = async (serviceId) => {
+        try {
+            const res = await fetch(`https://vaultrex-backend.onrender.com/subscribe`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ userId: user.id, serviceId }),
+            });
+            const data = await res.json();
+            if (res.ok) alert("Subscribed!");
+        } catch (err) {
+            console.error(err);
+        }
+    };
+
+    // ---------- QR-SCAN STUB ----------
+    const handleQRScan = (itemId) => {
+        alert(`Scanned item ID: ${itemId} (implement QR reader)`);
+    };
+
+    if (!user) {
+        return (
+            <div className="login-container">
+                <h1>Vaultrex Inventory</h1>
+                {error && <div className="error">{error}</div>}
+                <input
+                    type="email"
+                    placeholder="Email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                />
+                <input
+                    type="password"
+                    placeholder="Password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                />
+                <button onClick={handleLogin}>Login</button>
+            </div>
         );
-        setMessage(`Använde 1 av ${result.item.name}`);
-      }
-      setScanning(false);
     }
-  };
 
-  const handleError = (err) => console.error(err);
-
-  if (!user) {
     return (
-      <div className="login-container">
-        <h1>Login</h1>
-        {message && <p className="error">{message}</p>}
-        <input
-          type="email"
-          placeholder="Email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-        />
-        <input
-          type="password"
-          placeholder="Password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-        />
-        <button onClick={login}>Logga in</button>
-      </div>
-    );
-  }
+        <div className="dashboard">
+            <h1>Welcome, {user.email}</h1>
 
-  return (
-    <div className="dashboard">
-      <h1>Välkommen {user.email}</h1>
-      <button onClick={() => setScanning(!scanning)}>
-        {scanning ? "Stäng QR Scanner" : "Scanna QR"}
-      </button>
-      {scanning && <QrReader delay={300} onError={handleError} onScan={handleScan} />}
-      <h2>Inventory</h2>
-      <ul>
-        {inventory.map((item) => (
-          <li key={item.id}>
-            {item.name}: {item.quantity}
-          </li>
-        ))}
-      </ul>
-      {message && <p>{message}</p>}
-    </div>
-  );
+            <div className="tabs">
+                <button onClick={() => setActiveTab("inventory")}>Inventory</button>
+                <button onClick={() => setActiveTab("services")}>Services</button>
+            </div>
+
+            {activeTab === "inventory" && (
+                <div>
+                    <h2>Your Inventory</h2>
+                    <ul>
+                        {inventory.map((item) => (
+                            <li key={item.id}>
+                                {item.name} ({item.quantity})
+                                <button onClick={() => handleQRScan(item.id)}>Scan QR</button>
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            )}
+
+            {activeTab === "services" && (
+                <div>
+                    <h2>Available Services</h2>
+                    <ul>
+                        {services.map((s) => (
+                            <li key={s.id}>
+                                {s.name} - {s.price}€
+                                <button onClick={() => subscribeService(s.id)}>Subscribe</button>
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            )}
+        </div>
+    );
 }
