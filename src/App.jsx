@@ -1,19 +1,17 @@
 import React, { useEffect, useState } from "react";
-import "./App.css"; // CSS för layout och styling
+import "./App.css";
 
 export default function App() {
   const [items, setItems] = useState([]);
   const [newItem, setNewItem] = useState({ name: "", quantity: 0, category: "" });
 
-  // Hämta items från backend när sidan laddas
   useEffect(() => {
     fetch("https://vaultrex-backend.onrender.com/api/items")
       .then(res => res.json())
       .then(data => setItems(data))
-      .catch(err => console.error("Fel vid hämtning:", err));
+      .catch(err => console.error(err));
   }, []);
 
-  // Lägg till nytt item
   const addItem = async (e) => {
     e.preventDefault();
     if (!newItem.name || newItem.quantity <= 0 || !newItem.category) return;
@@ -25,8 +23,8 @@ export default function App() {
         body: JSON.stringify(newItem)
       });
       const added = await res.json();
-      setItems([...items, added]); // Lägg till direkt i listan
-      setNewItem({ name: "", quantity: 0, category: "" }); // nollställ formulär
+      setItems([...items, added]);
+      setNewItem({ name: "", quantity: 0, category: "" });
     } catch (err) {
       console.error("Fel vid tillägg:", err);
     }
@@ -36,30 +34,21 @@ export default function App() {
     <div className="container">
       <h1>Vaultrex Inventory</h1>
 
-      <table>
-        <thead>
-          <tr>
-            <th>Name</th>
-            <th>Quantity</th>
-            <th>Category</th>
-          </tr>
-        </thead>
-        <tbody>
-          {items.length === 0 ? (
-            <tr>
-              <td colSpan="3" style={{ textAlign: "center" }}>No items yet</td>
-            </tr>
-          ) : (
-            items.map(item => (
-              <tr key={item.id}>
-                <td>{item.name}</td>
-                <td>{item.quantity}</td>
-                <td>{item.category}</td>
-              </tr>
-            ))
-          )}
-        </tbody>
-      </table>
+      <div className="cards-container">
+        {items.length === 0 ? (
+          <p className="no-items">No items yet</p>
+        ) : (
+          items.map(item => (
+            <div className="item-card" key={item.id}>
+              <div className="item-name">{item.name}</div>
+              <div className="item-info">
+                <span>Qty: {item.quantity}</span>
+                <span>Category: {item.category}</span>
+              </div>
+            </div>
+          ))
+        )}
+      </div>
 
       <h2>Add New Item</h2>
       <form onSubmit={addItem} className="item-form">
