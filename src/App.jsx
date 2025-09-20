@@ -1,48 +1,67 @@
-import React, { useState } from "react";
-import { Routes, Route, Link } from "react-router-dom";
-import Inventory from "./Inventory";
-import Services from "./Services";
-import Login from "./Login";
+import React, { useState, useEffect } from "react";
+import "./App.css";
 
-function App() {
+export default function App() {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [user, setUser] = useState(null);
+  const [inventory, setInventory] = useState([]);
 
-  const handleLogin = (email, password) => {
-    if (email === "admin@vaultrex.se" && password === "Leary30!") {
-      setUser({ email });
+  const login = async () => {
+    const res = await fetch("https://vaultrex-backend.onrender.com/login", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email, password }),
+    });
+    const data = await res.json();
+    if (data.success) {
+      setUser(data.user);
+      fetchInventory(data.user.id);
     } else {
-      alert("Fel email eller lösenord");
+      alert("Login failed");
     }
   };
 
-  const handleLogout = () => setUser(null);
+  const fetchInventory = async (userId) => {
+    const res = await fetch(
+      `https://vaultrex-backend.onrender.com/inventory/${userId}`
+    );
+    const data = await res.json();
+    setInventory(data);
+  };
+
+  if (!user) {
+    return (
+      <div className="login-container">
+        <h1>Vaultrex Login</h1>
+        <input
+          placeholder="Email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+        />
+        <input
+          type="password"
+          placeholder="Password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+        />
+        <button onClick={login}>Login</button>
+      </div>
+    );
+  }
 
   return (
-    <div className="app-container">
-      <header>
-        <h1>Vaultrex Inventory</h1>
-        {user ? (
-          <button onClick={handleLogout}>Logga ut</button>
-        ) : (
-          <Link to="/login">Logga in</Link>
-        )}
-        <nav>
-          <Link to="/">Startsida</Link>
-          {user && <Link to="/inventory">Inventory</Link>}
-          {user && <Link to="/services">Tjänster</Link>}
-        </nav>
-      </header>
-
-      <main>
-        <Routes>
-          <Route path="/" element={<div>Välkommen till Vaultrex! Här kan du se våra tjänster.</div>} />
-          <Route path="/login" element={<Login onLogin={handleLogin} />} />
-          {user && <Route path="/inventory" element={<Inventory />} />}
-          {user && <Route path="/services" element={<Services />} />}
-        </Routes>
-      </main>
+    <div className="dashboard">
+      <h1>Welcome, {user.email}</h1>
+      <button onClick={() => setUser(null)}>Logout</button>
+      <h2>Your Inventory</h2>
+      <ul>
+        {inventory.map((item) => (
+          <li key={item.id}>
+            {item.name} - {item.quantity}
+          </li>
+        ))}
+      </ul>
     </div>
   );
 }
-
-export default App;
