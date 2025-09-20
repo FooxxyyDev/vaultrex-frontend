@@ -1,82 +1,98 @@
 import React, { useState } from "react";
-import { BrowserRouter as Router, Routes, Route, Link, Navigate } from "react-router-dom";
 import "./App.css";
 
 function App() {
   const [user, setUser] = useState(null);
+  const [showLogin, setShowLogin] = useState(false);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
 
+  // Dummy login för demo, byt till API-anrop senare
   const handleLogin = (e) => {
     e.preventDefault();
-    const email = e.target.email.value;
-    const password = e.target.password.value;
-
-    // Enkel demo-login
     if (email === "admin@vaultrex.se" && password === "Leary30!") {
       setUser({ email });
+      setShowLogin(false);
     } else {
-      alert("Fel användare eller lösenord!");
+      alert("Fel email eller lösenord!");
     }
   };
 
-  const handleLogout = () => setUser(null);
+  const handleLogout = () => {
+    setUser(null);
+    setEmail("");
+    setPassword("");
+  };
 
+  if (user) {
+    // Dashboard
+    return (
+      <div className="dashboard">
+        <header>
+          <h1>Vaultrex Dashboard</h1>
+          <button onClick={handleLogout} className="logout-btn">Logga ut</button>
+        </header>
+        <section>
+          <h2>Dina tjänster</h2>
+          <ul>
+            <li>Tjänst 1</li>
+            <li>Tjänst 2</li>
+            <li>Tjänst 3</li>
+          </ul>
+        </section>
+      </div>
+    );
+  }
+
+  // Startsida
   return (
-    <Router>
-      <div className="app-container">
-        <nav className="navbar">
-          <Link to="/">Home</Link>
-          <Link to="/dashboard">Dashboard</Link>
-          {!user && <button className="login-btn" onClick={() => document.getElementById("login-form").classList.toggle("show")}>Login</button>}
-          {user && <button className="logout-btn" onClick={handleLogout}>Logout</button>}
-        </nav>
+    <div className="landing">
+      <header>
+        <h1>Välkommen till Vaultrex</h1>
+        <button onClick={() => setShowLogin(true)} className="login-btn">
+          Logga in
+        </button>
+      </header>
 
-        <div id="login-form" className="login-form">
+      <main>
+        <section className="about">
+          <h2>Om oss</h2>
+          <p>Vi erbjuder smarta lösningar för inventariehantering och tjänster för ditt företag.</p>
+        </section>
+
+        <section className="services">
+          <h2>Mina tjänster</h2>
+          <ul>
+            <li>Tjänst 1: Smarta lagersystem</li>
+            <li>Tjänst 2: Automatiserad beställning</li>
+            <li>Tjänst 3: QR-baserad inventering</li>
+          </ul>
+        </section>
+      </main>
+
+      {showLogin && (
+        <div className="login-modal">
           <form onSubmit={handleLogin}>
-            <input type="email" name="email" placeholder="Email" required />
-            <input type="password" name="password" placeholder="Password" required />
+            <h2>Logga in</h2>
+            <input
+              type="email"
+              placeholder="Email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+            />
+            <input
+              type="password"
+              placeholder="Lösenord"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+            />
             <button type="submit">Logga in</button>
+            <button type="button" onClick={() => setShowLogin(false)}>Avbryt</button>
           </form>
         </div>
-
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/dashboard" element={user ? <Dashboard /> : <Navigate to="/" />} />
-        </Routes>
-      </div>
-    </Router>
-  );
-}
-
-function Home() {
-  return (
-    <div className="home">
-      <h1>Välkommen till Vaultrex</h1>
-      <p>Vi hjälper dig med inventering och tjänster på ett futuristiskt sätt.</p>
-      <div className="services">
-        <h2>Mina tjänster</h2>
-        <ul>
-          <li>Inventariehantering</li>
-          <li>Automatiska abonnemang</li>
-          <li>QR-scanning (framtida funktion)</li>
-        </ul>
-      </div>
-      <div className="faq">
-        <h2>Vanliga frågor</h2>
-        <p>Här kan vi ha Q&A om tjänsterna.</p>
-      </div>
-    </div>
-  );
-}
-
-function Dashboard() {
-  return (
-    <div className="dashboard">
-      <h1>Dashboard</h1>
-      <p>Här kan du se och hantera dina tjänster och inventarie.</p>
-      <div className="inventory">
-        <h2>Inventarie</h2>
-        <p>(Data från backend kommer visas här)</p>
-      </div>
+      )}
     </div>
   );
 }
