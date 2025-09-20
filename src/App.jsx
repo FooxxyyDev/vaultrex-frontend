@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { QrReader } from 'react-qr-reader';
 import './App.css';
 
 function App() {
@@ -9,6 +10,8 @@ function App() {
 
   const [inventory, setInventory] = useState([]);
   const [services, setServices] = useState([]);
+  const [activeTab, setActiveTab] = useState('inventory');
+  const [scanResult, setScanResult] = useState('');
 
   const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:10000';
 
@@ -105,29 +108,67 @@ function App() {
     );
   }
 
-  // Dashboard
   return (
     <div className="dashboard">
       <header>
         <h2>Dashboard</h2>
         <button onClick={handleLogout}>Logga ut</button>
       </header>
-      <section>
-        <h3>Dina produkter</h3>
-        <ul>
-          {inventory.map(item => (
-            <li key={item.id}>{item.name} ({item.quantity})</li>
-          ))}
-        </ul>
-      </section>
-      <section>
-        <h3>Dina tjänster</h3>
-        <ul>
-          {services.map(s => (
-            <li key={s.id}>{s.name} - {s.status}</li>
-          ))}
-        </ul>
-      </section>
+      <nav className="tabs">
+        <button onClick={() => setActiveTab('inventory')}>Inventarier</button>
+        <button onClick={() => setActiveTab('services')}>Tjänster</button>
+        <button onClick={() => setActiveTab('scanner')}>QR-Skanner</button>
+        <button onClick={() => setActiveTab('settings')}>Inställningar</button>
+      </nav>
+
+      {activeTab === 'inventory' && (
+        <section>
+          <h3>Dina produkter</h3>
+          <ul>
+            {inventory.map(item => (
+              <li key={item.id}>{item.name} ({item.quantity})</li>
+            ))}
+          </ul>
+        </section>
+      )}
+
+      {activeTab === 'services' && (
+        <section>
+          <h3>Dina tjänster</h3>
+          <ul>
+            {services.map(s => (
+              <li key={s.id}>{s.name} - {s.status}</li>
+            ))}
+          </ul>
+        </section>
+      )}
+
+      {activeTab === 'scanner' && (
+        <section>
+          <h3>QR-Skanner</h3>
+          <p>Skanna en QR-kod för att minska ett lager eller hantera produkter.</p>
+          <div className="qr-reader">
+            <QrReader
+              constraints={{ facingMode: 'environment' }}
+              onResult={(result, error) => {
+                if (!!result) {
+                  setScanResult(result?.text);
+                  // du kan här också automatiskt skicka fetch till backend för att minska inventory
+                }
+              }}
+              style={{ width: '300px' }}
+            />
+          </div>
+          {scanResult && <p>Resultat: {scanResult}</p>}
+        </section>
+      )}
+
+      {activeTab === 'settings' && (
+        <section>
+          <h3>Inställningar</h3>
+          <p>Här kan du senare lägga kontoinställningar etc.</p>
+        </section>
+      )}
     </div>
   );
 }
