@@ -1,22 +1,46 @@
-body, html { margin:0; padding:0; font-family: 'Segoe UI', sans-serif; background:#111; color:#0ff; }
-.app header { background:#000; padding:1rem; display:flex; justify-content:space-between; align-items:center; }
-header h1 { margin:0; color:#0ff; font-size:1.8rem; }
-nav button { margin-left:0.5rem; padding:0.4rem 0.8rem; border:none; border-radius:4px; cursor:pointer; background:#222; color:#0ff; transition:0.3s; }
-nav button.active { background:#0ff; color:#000; }
-nav button:hover { background:#0ff; color:#000; }
-main { padding:2rem; }
-section { margin-bottom:2rem; }
-.login input { display:block; margin:0.5rem 0; padding:0.5rem; width:250px; border-radius:4px; border:none; }
-.login button { padding:0.5rem 1rem; border:none; border-radius:4px; cursor:pointer; background:#0ff; color:#000; transition:0.3s; }
-.login button:hover { background:#00f; color:#fff; }
-.inventory .add-item { display:flex; gap:0.5rem; margin-bottom:1rem; }
-.inventory input { padding:0.4rem; border-radius:4px; border:none; width:120px; }
-.inventory button { padding:0.4rem 0.8rem; border:none; border-radius:4px; cursor:pointer; background:#0ff; color:#000; }
-.inventory button:hover { background:#00f; color:#fff; }
-.inventory ul { list-style:none; padding:0; }
-.inventory li { margin:0.3rem 0; }
-.services ul { list-style:none; padding:0; display:flex; gap:1rem; flex-wrap:wrap; }
-.services li { background:rgba(0,255,255,0.2); padding:1rem 1.5rem; border-radius:6px; display:flex; align-items:center; justify-content:space-between; width:180px; }
-.services button { margin-left:0.5rem; padding:0.3rem 0.6rem; border-radius:4px; border:none; cursor:pointer; background:#0ff; color:#000; transition:0.3s; }
-.services button:hover { background:#00f; color:#fff; }
-.services button:disabled { background:#444; color:#999; cursor:not-allowed; }
+body, html {
+  margin:0;
+  padding:0;
+  font-family: 'Segoe UI', sans-serif;
+  background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+  color:#0ff;
+}
+header {
+  background: rgba(0,0,0,0.8);
+  padding:1rem;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  box-shadow: 0 0 20px #0ff;
+}
+nav button {
+  margin-left:0.5rem;
+  padding:0.4rem 0.8rem;
+  border:none;
+  border-radius:6px;
+  cursor:pointer;
+  background:#222;
+  color:#0ff;
+  box-shadow: 0 0 5px #0ff;
+  transition: 0.3s;
+}
+nav button:hover, nav button.active {
+  background:#0ff;
+  color:#000;
+  box-shadow: 0 0 15px #0ff;
+}
+.inventory li, .services li {
+  background: rgba(0,255,255,0.1);
+  padding:0.8rem 1rem;
+  margin:0.3rem 0;
+  border-radius:8px;
+  box-shadow: 0 0 10px #0ff;
+  transition: 0.3s;
+}
+.inventory li:hover, .services li:hover {
+  box-shadow: 0 0 20px #0ff;
+}
+button:hover {
+  background:#00f;
+  color:#fff;
+}
