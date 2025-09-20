@@ -1,7 +1,7 @@
-import React from "react";
+import React, { useState } from "react";
 import { BrowserRouter, Routes, Route, useNavigate } from "react-router-dom";
 
-// Startpage
+// 🔹 Startpage
 function Home() {
   const navigate = useNavigate();
   return (
@@ -37,16 +37,80 @@ function Home() {
   );
 }
 
-// Dashboardpage
+// 🔹 Dashboard with tabs
 function Dashboard() {
+  const [tab, setTab] = useState("inventory");
+
   return (
-    <div className="min-h-screen bg-gray-100 text-gray-900 p-10">
-      <h1 className="text-3xl font-bold mb-6">Dashboard</h1>
-      <p>Här kan du hantera inventory, services och QR-scan.</p>
+    <div className="min-h-screen bg-gray-100 text-gray-900">
+      <header className="bg-white shadow p-4 flex justify-between items-center">
+        <h1 className="text-2xl font-bold">Vaultrex Dashboard</h1>
+        <button
+          className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
+          onClick={() => (window.location.href = "/")}
+        >
+          Logga ut
+        </button>
+      </header>
+
+      <div className="flex flex-col md:flex-row">
+        {/* Sidebar */}
+        <nav className="bg-white w-full md:w-64 border-r">
+          <ul className="flex md:flex-col">
+            <li
+              className={`p-4 cursor-pointer hover:bg-gray-200 ${
+                tab === "inventory" && "bg-gray-200 font-bold"
+              }`}
+              onClick={() => setTab("inventory")}
+            >
+              Inventory
+            </li>
+            <li
+              className={`p-4 cursor-pointer hover:bg-gray-200 ${
+                tab === "services" && "bg-gray-200 font-bold"
+              }`}
+              onClick={() => setTab("services")}
+            >
+              Services
+            </li>
+            <li
+              className={`p-4 cursor-pointer hover:bg-gray-200 ${
+                tab === "qr" && "bg-gray-200 font-bold"
+              }`}
+              onClick={() => setTab("qr")}
+            >
+              QR-Scan
+            </li>
+          </ul>
+        </nav>
+
+        {/* Content */}
+        <main className="flex-1 p-6">
+          {tab === "inventory" && (
+            <div>
+              <h2 className="text-3xl font-bold mb-4">Inventory</h2>
+              <p>Här kommer inventarielistan…</p>
+            </div>
+          )}
+          {tab === "services" && (
+            <div>
+              <h2 className="text-3xl font-bold mb-4">Services</h2>
+              <p>Här kommer dina tjänster…</p>
+            </div>
+          )}
+          {tab === "qr" && (
+            <div>
+              <h2 className="text-3xl font-bold mb-4">QR-Scan</h2>
+              <p>Här kommer QR-scannern…</p>
+            </div>
+          )}
+        </main>
+      </div>
     </div>
   );
 }
 
+// 🔹 Main App with routes
 export default function App() {
   return (
     <BrowserRouter>
