@@ -8,7 +8,6 @@ function App() {
   const [user, setUser] = useState(null);
 
   const handleLogin = (email, password) => {
-    // Förenklad login, ersätt med fetch mot backend
     if (email === "admin@vaultrex.se" && password === "Leary30!") {
       setUser({ email });
     } else {
