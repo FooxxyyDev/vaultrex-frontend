@@ -1,123 +1,102 @@
 import React, { useState } from "react";
-import { BrowserRouter, Routes, Route, useNavigate } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
+import QRScanner from "@yudiel/react-qr-scanner";
+import "./App.css";
 
-// 🔹 Startpage
-function Home() {
-  const navigate = useNavigate();
-  return (
-    <div className="min-h-screen bg-gradient-to-r from-purple-700 via-indigo-700 to-blue-800 text-white">
-      <div className="flex flex-col items-center justify-center py-20">
-        <h1 className="text-5xl font-extrabold mb-4">Vaultrex</h1>
-        <p className="text-xl mb-8 text-center max-w-lg">
-          Hantera lager, tjänster och QR-scanning i ett futuristiskt dashboard.
-        </p>
-        <button
-          className="px-8 py-3 bg-white text-purple-700 rounded-full font-semibold shadow-lg hover:scale-105 transition"
-          onClick={() => navigate("/dashboard")}
-        >
-          Logga in
-        </button>
-      </div>
+export default function App() {
+  const [user, setUser] = useState(null);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [qrResult, setQrResult] = useState("");
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 px-6 pb-20">
-        <div className="bg-white text-gray-800 p-6 rounded-2xl shadow-xl hover:shadow-2xl transition">
-          <h2 className="text-2xl font-bold mb-2">Inventory</h2>
-          <p>Hantera och håll koll på ditt lager</p>
-        </div>
-        <div className="bg-white text-gray-800 p-6 rounded-2xl shadow-xl hover:shadow-2xl transition">
-          <h2 className="text-2xl font-bold mb-2">Services</h2>
-          <p>Hantera dina tjänster och abonnemang</p>
-        </div>
-        <div className="bg-white text-gray-800 p-6 rounded-2xl shadow-xl hover:shadow-2xl transition">
-          <h2 className="text-2xl font-bold mb-2">QR-Scan</h2>
-          <p>Snabb scanning med din kamera</p>
-        </div>
-      </div>
-    </div>
-  );
-}
+  const handleLogin = () => {
+    // Dummy login för demo: admin@vaultrex.se / Leary30!
+    if (email === "admin@vaultrex.se" && password === "Leary30!") {
+      setUser({ email });
+    } else {
+      alert("Fel email eller lösenord");
+    }
+  };
 
-// 🔹 Dashboard with tabs
-function Dashboard() {
-  const [tab, setTab] = useState("inventory");
+  const handleLogout = () => {
+    setUser(null);
+    setEmail("");
+    setPassword("");
+    setQrResult("");
+  };
+
+  const handleScan = (result) => {
+    if (result) setQrResult(result);
+  };
 
   return (
-    <div className="min-h-screen bg-gray-100 text-gray-900">
-      <header className="bg-white shadow p-4 flex justify-between items-center">
-        <h1 className="text-2xl font-bold">Vaultrex Dashboard</h1>
-        <button
-          className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
-          onClick={() => (window.location.href = "/")}
-        >
-          Logga ut
-        </button>
-      </header>
-
-      <div className="flex flex-col md:flex-row">
-        {/* Sidebar */}
-        <nav className="bg-white w-full md:w-64 border-r">
-          <ul className="flex md:flex-col">
-            <li
-              className={`p-4 cursor-pointer hover:bg-gray-200 ${
-                tab === "inventory" && "bg-gray-200 font-bold"
-              }`}
-              onClick={() => setTab("inventory")}
-            >
-              Inventory
-            </li>
-            <li
-              className={`p-4 cursor-pointer hover:bg-gray-200 ${
-                tab === "services" && "bg-gray-200 font-bold"
-              }`}
-              onClick={() => setTab("services")}
-            >
-              Services
-            </li>
-            <li
-              className={`p-4 cursor-pointer hover:bg-gray-200 ${
-                tab === "qr" && "bg-gray-200 font-bold"
-              }`}
-              onClick={() => setTab("qr")}
-            >
-              QR-Scan
-            </li>
-          </ul>
+    <Router>
+      <div className="app-container">
+        <nav>
+          <Link to="/">Start</Link>
+          {user ? (
+            <>
+              <Link to="/services">Mina Tjänster</Link>
+              <button onClick={handleLogout}>Logga ut</button>
+            </>
+          ) : (
+            <Link to="/login">Logga in</Link>
+          )}
         </nav>
 
-        {/* Content */}
-        <main className="flex-1 p-6">
-          {tab === "inventory" && (
-            <div>
-              <h2 className="text-3xl font-bold mb-4">Inventory</h2>
-              <p>Här kommer inventarielistan…</p>
-            </div>
-          )}
-          {tab === "services" && (
-            <div>
-              <h2 className="text-3xl font-bold mb-4">Services</h2>
-              <p>Här kommer dina tjänster…</p>
-            </div>
-          )}
-          {tab === "qr" && (
-            <div>
-              <h2 className="text-3xl font-bold mb-4">QR-Scan</h2>
-              <p>Här kommer QR-scannern…</p>
-            </div>
-          )}
-        </main>
-      </div>
-    </div>
-  );
-}
+        <Routes>
+          <Route
+            path="/"
+            element={
+              <div className="home">
+                <h1>Välkommen till Vaultrex</h1>
+                <p>Här kan du hantera inventarier och tjänster smidigt.</p>
+              </div>
+            }
+          />
 
-// 🔹 Main App with routes
-export default function App() {
-  return (
-    <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/dashboard" element={<Dashboard />} />
-      </Routes>
-    </BrowserRouter>
+          <Route
+            path="/login"
+            element={
+              !user && (
+                <div className="login-box">
+                  <h2>Logga in</h2>
+                  <input
+                    type="email"
+                    placeholder="Email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                  />
+                  <input
+                    type="password"
+                    placeholder="Lösenord"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                  />
+                  <button onClick={handleLogin}>Logga in</button>
+                </div>
+              )
+            }
+          />
+
+          <Route
+            path="/services"
+            element={
+              user && (
+                <div className="services">
+                  <h2>Mina Tjänster</h2>
+                  <p>Scan QR-kod för att dra av artiklar:</p>
+                  <QRScanner
+                    onResult={(result) => handleScan(result)}
+                    style={{ width: "300px", margin: "20px auto" }}
+                  />
+                  {qrResult && <p>Senast skannade: {qrResult}</p>}
+                </div>
+              )
+            }
+          />
+        </Routes>
+      </div>
+    </Router>
   );
 }
