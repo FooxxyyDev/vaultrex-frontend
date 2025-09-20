@@ -5,7 +5,8 @@ body, html {
   background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
   color:#0ff;
 }
-header {
+
+.App header {
   background: rgba(0,0,0,0.8);
   padding:1rem;
   display:flex;
@@ -13,6 +14,7 @@ header {
   align-items:center;
   box-shadow: 0 0 20px #0ff;
 }
+
 nav button {
   margin-left:0.5rem;
   padding:0.4rem 0.8rem;
@@ -24,23 +26,57 @@ nav button {
   box-shadow: 0 0 5px #0ff;
   transition: 0.3s;
 }
+
 nav button:hover, nav button.active {
   background:#0ff;
   color:#000;
   box-shadow: 0 0 15px #0ff;
 }
+
+main {
+  padding:2rem;
+}
+
+section h2 {
+  margin-bottom:1rem;
+}
+
+.login input {
+  display:block;
+  margin:0.5rem 0;
+  padding:0.5rem;
+  border-radius:6px;
+  border:none;
+  width:200px;
+}
+
+button {
+  padding:0.5rem 1rem;
+  margin-top:0.5rem;
+  border:none;
+  border-radius:6px;
+  cursor:pointer;
+  background:#0ff;
+  color:#000;
+  transition:0.3s;
+}
+
+button:hover {
+  background:#00f;
+  color:#fff;
+}
+
 .inventory li, .services li {
   background: rgba(0,255,255,0.1);
   padding:0.8rem 1rem;
   margin:0.3rem 0;
   border-radius:8px;
   box-shadow: 0 0 10px #0ff;
-  transition: 0.3s;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
 }
+
 .inventory li:hover, .services li:hover {
   box-shadow: 0 0 20px #0ff;
-}
-button:hover {
-  background:#00f;
-  color:#fff;
 }
