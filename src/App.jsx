@@ -6,16 +6,29 @@ export default function App() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [activeTab, setActiveTab] = useState("home");
+  const [inventory, setInventory] = useState([]);
 
-  const handleLogin = (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
-    // Hardcoded admin user
-    if (email === "admin@vaultrex.se" && password === "Leary30!") {
-      setUser({ email });
+    const res = await fetch("https://vaultrex-backend.onrender.com/login", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email, password }),
+    });
+    const data = await res.json();
+    if (data.success) {
+      setUser(data.user);
       setActiveTab("dashboard");
+      fetchInventory(data.user.id);
     } else {
-      alert("Fel email eller lösenord!");
+      alert(data.message);
     }
+  };
+
+  const fetchInventory = async (userId) => {
+    const res = await fetch(`https://vaultrex-backend.onrender.com/inventory/${userId}`);
+    const data = await res.json();
+    setInventory(data);
   };
 
   const handleLogout = () => {
@@ -23,6 +36,7 @@ export default function App() {
     setEmail("");
     setPassword("");
     setActiveTab("home");
+    setInventory([]);
   };
 
   return (
@@ -34,7 +48,7 @@ export default function App() {
 
       <nav className="tabs">
         <button onClick={() => setActiveTab("home")} className={activeTab === "home" ? "active" : ""}>Startsida</button>
-        <button onClick={() => setActiveTab("services")} className={activeTab === "services" ? "active" : ""}>Mina Tjänster</button>
+        <button onClick={() => setActiveTab("dashboard")} className={activeTab === "dashboard" ? "active" : ""}>Mina Tjänster</button>
         {!user && <button onClick={() => setActiveTab("login")} className={activeTab === "login" ? "active" : ""}>Login</button>}
       </nav>
 
@@ -46,19 +60,19 @@ export default function App() {
           </section>
         )}
 
-        {activeTab === "services" && (
+        {activeTab === "dashboard" && (
           <section className="services">
             {user ? (
               <>
-                <h2>Dina Tjänster</h2>
+                <h2>Dina Artiklar</h2>
                 <ul>
-                  <li>Tjänst A - Abonnera</li>
-                  <li>Tjänst B - Abonnera</li>
-                  <li>Tjänst C - Abonnera</li>
+                  {inventory.map((item) => (
+                    <li key={item.id}>{item.name} - {item.quantity} st</li>
+                  ))}
                 </ul>
               </>
             ) : (
-              <p>Du måste logga in för att se dina tjänster.</p>
+              <p>Du måste logga in för att se dina artiklar.</p>
             )}
           </section>
         )}
