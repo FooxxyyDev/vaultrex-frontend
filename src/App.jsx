@@ -1,108 +1,135 @@
-import React, { useState, useEffect } from 'react';
-import { QrReader } from 'react-qr-reader';
-import './App.css';
+import React, { useState, useEffect } from "react";
+import QrReader from "react-qr-reader";
 
-function App() {
+export default function App() {
+  // --- States ---
   const [showLogin, setShowLogin] = useState(false);
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [user, setUser] = useState(null);
-
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [loggedIn, setLoggedIn] = useState(false);
+  const [userId, setUserId] = useState(null);
   const [inventory, setInventory] = useState([]);
-  const [services, setServices] = useState([]);
-  const [activeTab, setActiveTab] = useState('inventory');
-  const [scanResult, setScanResult] = useState('');
+  const [itemName, setItemName] = useState("");
+  const [itemQty, setItemQty] = useState(1);
 
-  const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:10000';
+  // --- Backend URL ---
+  const API_URL = "https://vaultrex-backend.onrender.com"; // ändra om din backend har annan URL
 
+  // --- Login ---
   const handleLogin = async () => {
-    const res = await fetch(`${API_URL}/login`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email, password })
-    });
-    if (res.ok) {
+    try {
+      const res = await fetch(`${API_URL}/login`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password })
+      });
+      if (!res.ok) throw new Error("Fel vid inloggning");
       const data = await res.json();
-      setUser(data.user);
-      localStorage.setItem('user', JSON.stringify(data.user));
-      loadData(data.user.id);
-    } else {
-      alert('Fel inloggning');
+      setLoggedIn(true);
+      setUserId(data.userId);
+      loadInventory(data.userId);
+    } catch (err) {
+      alert("Fel användare eller lösenord");
     }
   };
 
+  // --- Logout ---
   const handleLogout = () => {
-    setUser(null);
-    localStorage.removeItem('user');
+    setLoggedIn(false);
+    setUserId(null);
+    setEmail("");
+    setPassword("");
+    setInventory([]);
   };
 
-  const loadData = async (userId) => {
-    const inv = await fetch(`${API_URL}/inventory/${userId}`).then(r=>r.json());
-    const serv = await fetch(`${API_URL}/services/${userId}`).then(r=>r.json());
-    setInventory(inv);
-    setServices(serv);
+  // --- Hämta inventarie ---
+  const loadInventory = async (id) => {
+    const res = await fetch(`${API_URL}/inventory/${id}`);
+    const data = await res.json();
+    setInventory(data);
   };
 
-  useEffect(() => {
-    const u = localStorage.getItem('user');
-    if (u) {
-      const parsed = JSON.parse(u);
-      setUser(parsed);
-      loadData(parsed.id);
+  // --- Lägg till artikel ---
+  const addItem = async () => {
+    await fetch(`${API_URL}/inventory/add`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        userId,
+        name: itemName,
+        quantity: parseInt(itemQty)
+      })
+    });
+    setItemName("");
+    setItemQty(1);
+    loadInventory(userId);
+  };
+
+  // --- QR scanna (dra av 1 st) ---
+  const handleScan = async (scanned) => {
+    if (scanned) {
+      await fetch(`${API_URL}/inventory/scan`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ userId, name: scanned })
+      });
+      loadInventory(userId);
+      alert(`Skannade: ${scanned} - kvantitet uppdaterad`);
     }
-  }, []);
+  };
 
-  if (!user) {
+  const handleError = (err) => console.error(err);
+
+  // --- UI ---
+  if (!loggedIn) {
     return (
-      <div className="landing">
+      <div className="app">
         <header>
           <h1>Vaultrex</h1>
           <nav>
-            <a href="#services">Tjänster</a>
-            <a href="#faq">FAQ</a>
-            <button onClick={() => setShowLogin(!showLogin)}>Logga in</button>
+            <button onClick={() => setShowLogin(false)}>Hem</button>
+            <button onClick={() => setShowLogin(false)}>Tjänster</button>
+            <button onClick={() => setShowLogin(false)}>Q&A</button>
+            <button onClick={() => setShowLogin(true)}>Logga in</button>
           </nav>
         </header>
 
-        <section className="hero">
-          <h2>Välkommen till Vaultrex</h2>
-          <p>Smart inventering & tjänstehantering</p>
-        </section>
-
-        <section id="services">
-          <h3>Våra Tjänster</h3>
-          <ul>
-            <li>Inventeringssystem</li>
-            <li>Automatisk beställning</li>
-            <li>QR-skanning</li>
-          </ul>
-        </section>
-
-        <section id="faq">
-          <h3>FAQ</h3>
-          <p><b>Hur fungerar tjänsten?</b> Du loggar in och hanterar dina produkter och tjänster.</p>
-          <p><b>Kan jag testa gratis?</b> Ja, kontakta oss.</p>
-        </section>
-
-        {showLogin && (
-          <div className="login-modal">
-            <div className="login-box">
-              <h3>Logga in</h3>
-              <input
-                type="email"
-                placeholder="Email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-              />
-              <input
-                type="password"
-                placeholder="Lösenord"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-              />
-              <button onClick={handleLogin}>Logga in</button>
-            </div>
-          </div>
+        {!showLogin ? (
+          <main>
+            <section>
+              <h2>Välkommen till Vaultrex</h2>
+              <p>Vi erbjuder smart inventariehantering med QR-koder.</p>
+            </section>
+            <section>
+              <h2>Tjänster</h2>
+              <ul>
+                <li>Inventariehantering</li>
+                <li>QR-kod spårning</li>
+                <li>Automatisk beställning</li>
+              </ul>
+            </section>
+            <section>
+              <h2>Frågor och svar</h2>
+              <p><strong>Hur funkar det?</strong> Du loggar in och scannar dina artiklar.</p>
+            </section>
+          </main>
+        ) : (
+          <main className="login-section">
+            <h2>Logga in</h2>
+            <input
+              type="email"
+              placeholder="E-post"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+            />
+            <input
+              type="password"
+              placeholder="Lösenord"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+            />
+            <button onClick={handleLogin}>Logga in</button>
+          </main>
         )}
       </div>
     );
@@ -111,66 +138,48 @@ function App() {
   return (
     <div className="dashboard">
       <header>
-        <h2>Dashboard</h2>
+        <h1>Vaultrex Dashboard</h1>
         <button onClick={handleLogout}>Logga ut</button>
       </header>
-      <nav className="tabs">
-        <button onClick={() => setActiveTab('inventory')}>Inventarier</button>
-        <button onClick={() => setActiveTab('services')}>Tjänster</button>
-        <button onClick={() => setActiveTab('scanner')}>QR-Skanner</button>
-        <button onClick={() => setActiveTab('settings')}>Inställningar</button>
-      </nav>
 
-      {activeTab === 'inventory' && (
+      <main>
         <section>
-          <h3>Dina produkter</h3>
+          <h2>Ditt lager</h2>
           <ul>
-            {inventory.map(item => (
-              <li key={item.id}>{item.name} ({item.quantity})</li>
+            {inventory.map((item) => (
+              <li key={item.id}>
+                {item.name} – {item.quantity} st
+              </li>
             ))}
           </ul>
-        </section>
-      )}
 
-      {activeTab === 'services' && (
-        <section>
-          <h3>Dina tjänster</h3>
-          <ul>
-            {services.map(s => (
-              <li key={s.id}>{s.name} - {s.status}</li>
-            ))}
-          </ul>
+          <h3>Lägg till artikel</h3>
+          <input
+            type="text"
+            placeholder="Artikelnamn"
+            value={itemName}
+            onChange={(e) => setItemName(e.target.value)}
+          />
+          <input
+            type="number"
+            placeholder="Antal"
+            value={itemQty}
+            onChange={(e) => setItemQty(e.target.value)}
+          />
+          <button onClick={addItem}>Lägg till</button>
         </section>
-      )}
 
-      {activeTab === 'scanner' && (
         <section>
-          <h3>QR-Skanner</h3>
-          <p>Skanna en QR-kod för att minska ett lager eller hantera produkter.</p>
-          <div className="qr-reader">
-            <QrReader
-              constraints={{ facingMode: 'environment' }}
-              onResult={(result, error) => {
-                if (!!result) {
-                  setScanResult(result?.text);
-                  // du kan här också automatiskt skicka fetch till backend för att minska inventory
-                }
-              }}
-              style={{ width: '300px' }}
-            />
-          </div>
-          {scanResult && <p>Resultat: {scanResult}</p>}
+          <h2>QR-scanner</h2>
+          <p>Skanna artikelns namn (QR innehåller artikelns namn)</p>
+          <QrReader
+            delay={300}
+            onError={handleError}
+            onScan={handleScan}
+            style={{ width: "300px" }}
+          />
         </section>
-      )}
-
-      {activeTab === 'settings' && (
-        <section>
-          <h3>Inställningar</h3>
-          <p>Här kan du senare lägga kontoinställningar etc.</p>
-        </section>
-      )}
+      </main>
     </div>
   );
 }
-
-export default App;
