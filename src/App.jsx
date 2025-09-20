@@ -1,20 +1,34 @@
-import React, { useState } from "react";
-import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
-import QRScanner from "@yudiel/react-qr-scanner";
+import React, { useState, useEffect } from "react";
+import { Scanner } from "@yudiel/react-qr-scanner";
 import "./App.css";
 
 export default function App() {
   const [user, setUser] = useState(null);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [qrResult, setQrResult] = useState("");
+  const [tab, setTab] = useState("inventory");
+  const [inventory, setInventory] = useState([]);
+  const [services, setServices] = useState([]);
+  const [scanResult, setScanResult] = useState("");
 
-  const handleLogin = () => {
-    // Dummy login för demo: admin@vaultrex.se / Leary30!
-    if (email === "admin@vaultrex.se" && password === "Leary30!") {
-      setUser({ email });
-    } else {
-      alert("Fel email eller lösenord");
+  // Inloggning
+  const handleLogin = async () => {
+    try {
+      const res = await fetch("https://vaultrex-backend.onrender.com/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        setUser(data.user);
+        fetchInventory();
+        fetchServices();
+      } else {
+        alert("Fel email eller lösenord");
+      }
+    } catch (err) {
+      console.error(err);
     }
   };
 
@@ -22,81 +36,101 @@ export default function App() {
     setUser(null);
     setEmail("");
     setPassword("");
-    setQrResult("");
+    setTab("inventory");
   };
 
-  const handleScan = (result) => {
-    if (result) setQrResult(result);
+  // Hämta inventory
+  const fetchInventory = async () => {
+    if (!user) return;
+    const res = await fetch(`https://vaultrex-backend.onrender.com/inventory/${user.id}`);
+    const data = await res.json();
+    setInventory(data);
+  };
+
+  // Hämta services
+  const fetchServices = async () => {
+    if (!user) return;
+    const res = await fetch(`https://vaultrex-backend.onrender.com/services/${user.id}`);
+    const data = await res.json();
+    setServices(data);
+  };
+
+  // QR Scan
+  const handleScan = async (code) => {
+    if (!code) return;
+    setScanResult(code);
+
+    try {
+      await fetch("https://vaultrex-backend.onrender.com/inventory/scan", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ userId: user.id, code }),
+      });
+      fetchInventory();
+    } catch (err) {
+      console.error(err);
+    }
   };
 
   return (
-    <Router>
-      <div className="app-container">
-        <nav>
-          <Link to="/">Start</Link>
-          {user ? (
-            <>
-              <Link to="/services">Mina Tjänster</Link>
-              <button onClick={handleLogout}>Logga ut</button>
-            </>
-          ) : (
-            <Link to="/login">Logga in</Link>
-          )}
-        </nav>
+    <div className="app">
+      <header>
+        <h1>Vaultrex Inventory</h1>
+        {user && <button className="logout-btn" onClick={handleLogout}>Logga ut</button>}
+      </header>
 
-        <Routes>
-          <Route
-            path="/"
-            element={
-              <div className="home">
-                <h1>Välkommen till Vaultrex</h1>
-                <p>Här kan du hantera inventarier och tjänster smidigt.</p>
+      {!user ? (
+        <div className="login-panel">
+          <h2>Logga in</h2>
+          <input type="email" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} />
+          <input type="password" placeholder="Lösenord" value={password} onChange={(e) => setPassword(e.target.value)} />
+          <button onClick={handleLogin}>Logga in</button>
+        </div>
+      ) : (
+        <div className="dashboard">
+          <nav>
+            <button onClick={() => setTab("inventory")} className={tab === "inventory" ? "active" : ""}>Inventory</button>
+            <button onClick={() => setTab("services")} className={tab === "services" ? "active" : ""}>Tjänster</button>
+            <button onClick={() => setTab("qr")} className={tab === "qr" ? "active" : ""}>QR Scanner</button>
+          </nav>
+
+          <main>
+            {tab === "inventory" && (
+              <div className="tab-content">
+                <h2>Inventory</h2>
+                <ul>
+                  {inventory.map((item) => (
+                    <li key={item.id}>{item.name}: {item.quantity}</li>
+                  ))}
+                </ul>
               </div>
-            }
-          />
+            )}
 
-          <Route
-            path="/login"
-            element={
-              !user && (
-                <div className="login-box">
-                  <h2>Logga in</h2>
-                  <input
-                    type="email"
-                    placeholder="Email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                  />
-                  <input
-                    type="password"
-                    placeholder="Lösenord"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                  />
-                  <button onClick={handleLogin}>Logga in</button>
-                </div>
-              )
-            }
-          />
+            {tab === "services" && (
+              <div className="tab-content">
+                <h2>Mina Tjänster</h2>
+                <ul>
+                  {services.map((s) => (
+                    <li key={s.id}>{s.name} - {s.status}</li>
+                  ))}
+                </ul>
+              </div>
+            )}
 
-          <Route
-            path="/services"
-            element={
-              user && (
-                <div className="services">
-                  <h2>Mina Tjänster</h2>
-                  <p>Scan QR-kod för att dra av artiklar:</p>
-                  <QRScanner
-                    onResult={(result) => handleScan(result)}
-                    style={{ width: "300px", margin: "20px auto" }}
-                  />
-                  {qrResult && <p>Senast skannade: {qrResult}</p>}
-                </div>
-              )
-            }
-          />
-        </Routes>
-      </div>
-    </Router>
+            {tab === "qr" && (
+              <div className="tab-content">
+                <h2>QR Scanner</h2>
+                <Scanner
+                  onResult={(r) => handleScan(r?.text)}
+                  onError={(err) => console.error(err)}
+                  style={{ width: "300px", margin: "20px auto" }}
+                />
+                {scanResult && <p>Senaste kod: {scanResult}</p>}
+              </div>
+            )}
+          </main>
+        </div>
+      )}
+    </div>
   );
 }
