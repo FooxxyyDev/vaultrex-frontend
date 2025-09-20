@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Scanner } from "@yudiel/react-qr-scanner";
+import { QrScanner } from "@yudiel/react-qr-scanner";
 import "./App.css";
 
 function App() {
@@ -13,7 +13,6 @@ function App() {
 
   const API_URL = import.meta.env.VITE_API_URL || "https://vaultrex-backend.onrender.com";
 
-  // Hämta inventory när man är inloggad
   useEffect(() => {
     if (user) {
       fetch(`${API_URL}/inventory/${user.id}`)
@@ -35,7 +34,7 @@ function App() {
         if (data.error) {
           alert("Fel inloggningsuppgifter");
         } else {
-          setUser(data);
+          setUser(data.user);
           setActiveTab("inventory");
         }
       })
@@ -51,6 +50,7 @@ function App() {
 
   const addItem = (e) => {
     e.preventDefault();
+    if (!newItem.name || !newItem.quantity) return;
     fetch(`${API_URL}/inventory/add`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -72,7 +72,6 @@ function App() {
 
   return (
     <div className="app">
-      {/* Top navigation */}
       <nav className="navbar">
         <h1 className="logo">Vaultrex</h1>
         <ul className="nav-links">
@@ -83,30 +82,25 @@ function App() {
         </ul>
         <div className="auth-section">
           {user ? (
-            <button onClick={handleLogout} className="logout-btn">
-              Logga ut
-            </button>
+            <button onClick={handleLogout} className="logout-btn">Logga ut</button>
           ) : (
-            <button onClick={() => setActiveTab("login")} className="login-btn">
-              Logga in
-            </button>
+            <button onClick={() => setActiveTab("login")} className="login-btn">Logga in</button>
           )}
         </div>
       </nav>
 
-      {/* Content */}
       <div className="content">
         {activeTab === "home" && (
           <section>
             <h2>Välkommen till Vaultrex</h2>
-            <p>Hantera inventarier, tjänster och QR-scanning enkelt.</p>
+            <p>Hantera inventarier, tjänster och QR-skanning enkelt.</p>
           </section>
         )}
 
         {activeTab === "services" && (
           <section>
             <h2>Våra Tjänster</h2>
-            <p>Här kan du läsa om våra tjänster och prenumerera.</p>
+            <p>Läs om våra tjänster och hur det fungerar.</p>
           </section>
         )}
 
@@ -138,9 +132,7 @@ function App() {
             <h2>Ditt Inventarie</h2>
             <ul>
               {inventory.map((item) => (
-                <li key={item.id}>
-                  {item.name} – {item.quantity} st
-                </li>
+                <li key={item.id}>{item.name} – {item.quantity} st</li>
               ))}
             </ul>
             <form onSubmit={addItem} className="add-form">
@@ -165,13 +157,14 @@ function App() {
 
         {activeTab === "scanner" && (
           <section>
-            <h2>QR-skanner</h2>
-            <Scanner
-              onResult={(text) => {
-                if (text) {
-                  setScanResult(text);
+            <h2>QR-Skanner</h2>
+            <QrScanner
+              onDecode={(result) => {
+                if (result) {
+                  setScanResult(result);
                 }
               }}
+              onError={(err) => console.error(err)}
             />
             {scanResult && <p>Resultat: {scanResult}</p>}
           </section>
