@@ -1,67 +1,84 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
+import { BrowserRouter as Router, Routes, Route, Link, Navigate } from "react-router-dom";
 import "./App.css";
 
-export default function App() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+function App() {
   const [user, setUser] = useState(null);
-  const [inventory, setInventory] = useState([]);
 
-  const login = async () => {
-    const res = await fetch("https://vaultrex-backend.onrender.com/login", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email, password }),
-    });
-    const data = await res.json();
-    if (data.success) {
-      setUser(data.user);
-      fetchInventory(data.user.id);
+  const handleLogin = (e) => {
+    e.preventDefault();
+    const email = e.target.email.value;
+    const password = e.target.password.value;
+
+    // Enkel demo-login
+    if (email === "admin@vaultrex.se" && password === "Leary30!") {
+      setUser({ email });
     } else {
-      alert("Login failed");
+      alert("Fel användare eller lösenord!");
     }
   };
 
-  const fetchInventory = async (userId) => {
-    const res = await fetch(
-      `https://vaultrex-backend.onrender.com/inventory/${userId}`
-    );
-    const data = await res.json();
-    setInventory(data);
-  };
-
-  if (!user) {
-    return (
-      <div className="login-container">
-        <h1>Vaultrex Login</h1>
-        <input
-          placeholder="Email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-        />
-        <input
-          type="password"
-          placeholder="Password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-        />
-        <button onClick={login}>Login</button>
-      </div>
-    );
-  }
+  const handleLogout = () => setUser(null);
 
   return (
-    <div className="dashboard">
-      <h1>Welcome, {user.email}</h1>
-      <button onClick={() => setUser(null)}>Logout</button>
-      <h2>Your Inventory</h2>
-      <ul>
-        {inventory.map((item) => (
-          <li key={item.id}>
-            {item.name} - {item.quantity}
-          </li>
-        ))}
-      </ul>
+    <Router>
+      <div className="app-container">
+        <nav className="navbar">
+          <Link to="/">Home</Link>
+          <Link to="/dashboard">Dashboard</Link>
+          {!user && <button className="login-btn" onClick={() => document.getElementById("login-form").classList.toggle("show")}>Login</button>}
+          {user && <button className="logout-btn" onClick={handleLogout}>Logout</button>}
+        </nav>
+
+        <div id="login-form" className="login-form">
+          <form onSubmit={handleLogin}>
+            <input type="email" name="email" placeholder="Email" required />
+            <input type="password" name="password" placeholder="Password" required />
+            <button type="submit">Logga in</button>
+          </form>
+        </div>
+
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/dashboard" element={user ? <Dashboard /> : <Navigate to="/" />} />
+        </Routes>
+      </div>
+    </Router>
+  );
+}
+
+function Home() {
+  return (
+    <div className="home">
+      <h1>Välkommen till Vaultrex</h1>
+      <p>Vi hjälper dig med inventering och tjänster på ett futuristiskt sätt.</p>
+      <div className="services">
+        <h2>Mina tjänster</h2>
+        <ul>
+          <li>Inventariehantering</li>
+          <li>Automatiska abonnemang</li>
+          <li>QR-scanning (framtida funktion)</li>
+        </ul>
+      </div>
+      <div className="faq">
+        <h2>Vanliga frågor</h2>
+        <p>Här kan vi ha Q&A om tjänsterna.</p>
+      </div>
     </div>
   );
 }
+
+function Dashboard() {
+  return (
+    <div className="dashboard">
+      <h1>Dashboard</h1>
+      <p>Här kan du se och hantera dina tjänster och inventarie.</p>
+      <div className="inventory">
+        <h2>Inventarie</h2>
+        <p>(Data från backend kommer visas här)</p>
+      </div>
+    </div>
+  );
+}
+
+export default App;
