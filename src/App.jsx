@@ -1,84 +1,52 @@
+// App.jsx
 import React, { useState, useEffect } from "react";
 import "./App.css";
 
-export default function App() {
+function App() {
   const [user, setUser] = useState(null);
-  const [activeTab, setActiveTab] = useState("inventory");
+  const [tab, setTab] = useState("services");
   const [inventory, setInventory] = useState([]);
-  const [services, setServices] = useState([]);
-  const [loginData, setLoginData] = useState({ email: "", password: "" });
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
 
-  // --- Hämta inventory och services när användare loggar in ---
-  useEffect(() => {
-    if (user) {
-      fetch("/api/inventory")
-        .then(res => res.json())
-        .then(data => setInventory(data))
-        .catch(console.error);
-
-      fetch("/api/services")
-        .then(res => res.json())
-        .then(data => setServices(data))
-        .catch(console.error);
-    }
-  }, [user]);
-
-  // --- Inloggning ---
-  const handleLogin = (e) => {
-    e.preventDefault();
-    fetch("/api/login", {
+  const login = async () => {
+    const res = await fetch(`${process.env.REACT_APP_API_URL}/login`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(loginData)
-    })
-      .then(res => res.json())
-      .then(data => {
-        if (data.success) setUser(data.user);
-        else alert("Fel användarnamn eller lösenord!");
-      })
-      .catch(console.error);
+      body: JSON.stringify({ email, password }),
+    });
+    const data = await res.json();
+    if (data.user) setUser(data.user);
+    else alert("Fel email eller lösenord");
   };
 
-  // --- Logga ut ---
-  const handleLogout = () => setUser(null);
-
-  // --- QR-skanning (mock) ---
-  const handleScanQR = () => {
-    const itemId = prompt("Skanna QR-kod / Ange artikel ID:");
-    if (!itemId) return;
-    fetch(`/api/inventory/scan/${itemId}`, { method: "POST" })
-      .then(res => res.json())
-      .then(data => {
-        alert(data.message);
-        // Uppdatera inventory
-        fetch("/api/inventory")
-          .then(res => res.json())
-          .then(setInventory);
-      })
-      .catch(console.error);
+  const fetchInventory = async () => {
+    if (!user) return;
+    const res = await fetch(`${process.env.REACT_APP_API_URL}/inventory/${user.id}`);
+    const data = await res.json();
+    setInventory(data);
   };
+
+  const scanItem = async (id) => {
+    const res = await fetch(`${process.env.REACT_APP_API_URL}/inventory/scan`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ itemId: id }),
+    });
+    const data = await res.json();
+    if (data.success) fetchInventory();
+    else alert(data.error);
+  };
+
+  useEffect(() => { fetchInventory(); }, [user]);
 
   if (!user) {
     return (
       <div className="login-container">
         <h1>Vaultrex Login</h1>
-        <form onSubmit={handleLogin}>
-          <input
-            type="email"
-            placeholder="Email"
-            value={loginData.email}
-            onChange={e => setLoginData({...loginData, email: e.target.value})}
-            required
-          />
-          <input
-            type="password"
-            placeholder="Password"
-            value={loginData.password}
-            onChange={e => setLoginData({...loginData, password: e.target.value})}
-            required
-          />
-          <button type="submit">Logga in</button>
-        </form>
+        <input placeholder="Email" value={email} onChange={e=>setEmail(e.target.value)} />
+        <input type="password" placeholder="Password" value={password} onChange={e=>setPassword(e.target.value)} />
+        <button onClick={login}>Logga in</button>
       </div>
     );
   }
@@ -87,63 +55,36 @@ export default function App() {
     <div className="dashboard">
       <header>
         <h1>Vaultrex Dashboard</h1>
-        <button onClick={handleLogout}>Logga ut</button>
+        <button onClick={()=>setUser(null)}>Logga ut</button>
       </header>
 
       <nav>
-        <button
-          className={activeTab === "inventory" ? "active" : ""}
-          onClick={() => setActiveTab("inventory")}
-        >
-          Inventory
-        </button>
-        <button
-          className={activeTab === "services" ? "active" : ""}
-          onClick={() => setActiveTab("services")}
-        >
-          Services
-        </button>
-        <button
-          className={activeTab === "settings" ? "active" : ""}
-          onClick={() => setActiveTab("settings")}
-        >
-          Settings
-        </button>
+        <button className={tab==="services"?"active":""} onClick={()=>setTab("services")}>Mina tjänster</button>
+        <button className={tab==="inventory"?"active":""} onClick={()=>setTab("inventory")}>Inventory</button>
       </nav>
 
       <main>
-        {activeTab === "inventory" && (
-          <div className="inventory">
-            <button onClick={handleScanQR}>Scan QR / Dra artikel</button>
-            {inventory.map(item => (
+        {tab==="services" && (
+          <div>
+            <h2>Mina tjänster</h2>
+            <p>Här kan du visa alla tjänster, abonnera, och se QR-koder för att skanna artiklar.</p>
+          </div>
+        )}
+
+        {tab==="inventory" && (
+          <div>
+            <h2>Inventory</h2>
+            {inventory.map(item=>(
               <div key={item.id} className="inventory-item">
-                <span>{item.name} (Antal: {item.quantity})</span>
-                <button onClick={() => alert(`Redigera ${item.name}`)}>Redigera</button>
+                <span>{item.name} ({item.quantity})</span>
+                <button onClick={()=>scanItem(item.id)}>Skanna</button>
               </div>
             ))}
-          </div>
-        )}
-
-        {activeTab === "services" && (
-          <div className="services">
-            {services.map(service => (
-              <div key={service.id} className="service-item">
-                <span>{service.name}</span>
-                <button onClick={() => alert(`Abonnera på ${service.name}`)}>Abonnera</button>
-              </div>
-            ))}
-          </div>
-        )}
-
-        {activeTab === "settings" && (
-          <div className="settings">
-            <h2>Inställningar</h2>
-            <input type="text" placeholder="Ändra e-mail" />
-            <input type="password" placeholder="Ändra lösenord" />
-            <button>Uppdatera konto</button>
           </div>
         )}
       </main>
     </div>
   );
 }
+
+export default App;
