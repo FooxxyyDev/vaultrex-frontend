@@ -1,42 +1,88 @@
 body {
-  font-family: 'Segoe UI', sans-serif;
-  background: #0f0f0f;
-  color: #f0f0f0;
   margin: 0;
-  padding: 0;
+  font-family: "Arial", sans-serif;
+  background-color: #0a0a0a;
+  color: #f0f0f0;
 }
 
-.login-container,
-.dashboard {
-  max-width: 400px;
-  margin: 50px auto;
-  padding: 30px;
-  background: #1a1a1a;
-  border-radius: 12px;
-  box-shadow: 0 0 20px #00ffcc;
+.app-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
 }
 
-input {
-  display: block;
-  width: 100%;
-  margin: 10px 0;
-  padding: 10px;
-  border-radius: 8px;
-  border: none;
-  outline: none;
+.navbar {
+  display: flex;
+  gap: 20px;
+  padding: 20px 0;
+  border-bottom: 1px solid #333;
+  align-items: center;
 }
 
-button {
-  padding: 10px 20px;
-  background: #00ffcc;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
+.navbar a {
+  color: #0ff;
+  text-decoration: none;
   font-weight: bold;
 }
 
-button:hover {
-  background: #00d9aa;
+.navbar button {
+  margin-left: auto;
+  padding: 5px 15px;
+  background-color: #0ff;
+  border: none;
+  color: #000;
+  font-weight: bold;
+  cursor: pointer;
+  border-radius: 5px;
+}
+
+.login-form {
+  display: none;
+  position: absolute;
+  top: 70px;
+  right: 20px;
+  background-color: #111;
+  padding: 20px;
+  border: 1px solid #0ff;
+  border-radius: 10px;
+  z-index: 1000;
+}
+
+.login-form.show {
+  display: block;
+}
+
+.login-form input {
+  display: block;
+  margin: 10px 0;
+  padding: 10px;
+  width: 200px;
+  border-radius: 5px;
+  border: 1px solid #0ff;
+  background-color: #000;
+  color: #0ff;
+}
+
+.login-form button {
+  background-color: #0ff;
+  color: #000;
+  font-weight: bold;
+  border: none;
+  padding: 10px;
+  width: 100%;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.home h1, .dashboard h1 {
+  color: #0ff;
+}
+
+.services, .faq, .inventory {
+  margin-top: 20px;
+  padding: 20px;
+  border: 1px solid #0ff;
+  border-radius: 10px;
 }
 
 ul {
@@ -44,6 +90,6 @@ ul {
   padding: 0;
 }
 
-li {
+ul li {
   padding: 5px 0;
 }
