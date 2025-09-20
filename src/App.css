@@ -82,4 +82,28 @@ section {
 
 .dashboard section {
   padding: 2rem;
+
+
+  .tabs {
+  display: flex;
+  gap: 1rem;
+  background: #111;
+  padding: 1rem;
+}
+
+.tabs button {
+  background: #0ff;
+  color: #000;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  cursor: pointer;
+}
+
+.qr-reader {
+  margin-top: 1rem;
+  display: flex;
+  justify-content: center;
+}
+
 }
