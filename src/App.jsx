@@ -1,81 +1,68 @@
+// src/App.jsx
 import React, { useState } from "react";
 import "./App.css";
 
-export default function App() {
-  const [page, setPage] = useState("landing"); // landing | login | dashboard
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-
-  const handleLogin = (e) => {
-    e.preventDefault();
-    // Här kan du byta ut mot riktig fetch till backend
-    if (email === "admin@vaultrex.se" && password === "admin") {
-      setPage("dashboard");
-    } else {
-      alert("Fel email eller lösenord");
-    }
-  };
+function App() {
+  const [showLogin, setShowLogin] = useState(false);
 
   return (
-    <div className="app-container">
-      {page === "landing" && (
-        <div className="landing">
-          <h1 className="title">Välkommen till Vaultrex</h1>
-          <p className="subtitle">
-            Hantera dina inventarier och tjänster enkelt.
-          </p>
-          <button className="btn-primary" onClick={() => setPage("login")}>
-            Logga in
+    <div className="app">
+      {/* Header */}
+      <header className="header">
+        <div className="logo">Vaultrex</div>
+        <nav className="nav">
+          <a href="#services">Tjänster</a>
+          <a href="#faq">FAQ</a>
+          <button className="login-btn" onClick={() => setShowLogin(!showLogin)}>
+            {showLogin ? "Stäng login" : "Logga in"}
           </button>
-        </div>
-      )}
+        </nav>
+      </header>
 
-      {page === "login" && (
-        <div className="login">
-          <h2 className="title">Logga in</h2>
-          <form onSubmit={handleLogin} className="login-form">
-            <input
-              type="email"
-              placeholder="E-post"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-            />
-            <input
-              type="password"
-              placeholder="Lösenord"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-            />
-            <button type="submit" className="btn-primary">
-              Logga in
-            </button>
-          </form>
-          <button className="btn-secondary" onClick={() => setPage("landing")}>
-            Tillbaka
-          </button>
-        </div>
-      )}
+      {/* Landing Content */}
+      <section className="hero">
+        <h1>Välkommen till Vaultrex</h1>
+        <p>Smarta lösningar för inventering, tjänster och administration</p>
+      </section>
 
-      {page === "dashboard" && (
-        <div className="dashboard">
-          <h2 className="title">Ditt konto</h2>
-          <div className="services-grid">
-            <div className="service-card">
-              <h3>Bas</h3>
-              <p>Grundläggande funktioner för lager & tjänster</p>
-            </div>
-            <div className="service-card">
-              <h3>Extra Tjänster</h3>
-              <p>Utökade funktioner för avancerad hantering</p>
-            </div>
+      <section id="services" className="services">
+        <h2>Våra tjänster</h2>
+        <div className="service-card">
+          <h3>Bas</h3>
+          <p>Inventeringssystem för små företag.</p>
+        </div>
+        <div className="service-card">
+          <h3>Extra</h3>
+          <p>Tilläggstjänster för automatiserad beställning och scanning.</p>
+        </div>
+      </section>
+
+      <section id="faq" className="faq">
+        <h2>Vanliga frågor</h2>
+        <div className="faq-item">
+          <h4>Hur funkar Vaultrex?</h4>
+          <p>Vaultrex hjälper företag att hålla koll på lager och tjänster automatiskt.</p>
+        </div>
+      </section>
+
+      {/* Login Modal */}
+      {showLogin && (
+        <div className="login-modal">
+          <div className="login-box">
+            <h2>Logga in</h2>
+            <form>
+              <input type="email" placeholder="E-post" />
+              <input type="password" placeholder="Lösenord" />
+              <button type="submit">Logga in</button>
+            </form>
           </div>
-          <button className="btn-secondary" onClick={() => setPage("landing")}>
-            Logga ut
-          </button>
         </div>
       )}
+
+      {/* Footer */}
+      <footer className="footer">© 2025 Vaultrex</footer>
     </div>
   );
 }
+
+export default App;
