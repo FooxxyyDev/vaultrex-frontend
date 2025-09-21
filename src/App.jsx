@@ -1,111 +1,104 @@
 import React, { useState } from "react";
 import "./App.css";
-import logo from "./logo.png"; // lägg din logga i src/ som logo.png
+import logo from ".logo.png"; // loggan du laddade upp – se till att den ligger i src/assets
 
-export default function App() {
-  const [showLogin, setShowLogin] = useState(false);
+function App() {
+  const [page, setPage] = useState("landing"); // landing, login, dashboard
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [services, setServices] = useState([]);
+
+  const API_URL = "https://vaultrex-backend.onrender.com"; // din backend
+
+  const handleLogin = async (e) => {
+    e.preventDefault();
+    try {
+      const res = await fetch(`${API_URL}/login`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email, password }),
+      });
+
+      if (!res.ok) {
+        alert("Felaktig e-post eller lösenord");
+        return;
+      }
+
+      const data = await res.json();
+      // hämta tjänster
+      const servicesRes = await fetch(`${API_URL}/services/${data.user.id}`);
+      const servicesData = await servicesRes.json();
+      setServices(servicesData);
+      setPage("dashboard");
+    } catch (err) {
+      console.error(err);
+      alert("Ett fel uppstod vid inloggning");
+    }
+  };
 
   return (
-    <div className="App">
-      {/* HEADER */}
-      <header className="site-header">
-        <div className="logo-wrapper">
-          <img src={logo} alt="Vaultrex Logo" className="logo" />
-          <h1 className="site-title">Vaultrex</h1>
-        </div>
-        <nav className="nav-links">
-          <a href="#services">Tjänster</a>
-          <a href="#faq">FAQ</a>
-          <button className="login-btn" onClick={() => setShowLogin(!showLogin)}>
-            Logga in
-          </button>
-        </nav>
+    <>
+      {/* Header med logga */}
+      <header>
+        <img src={logo} alt="Vaultrex Logo" />
       </header>
 
-      {/* LANDING */}
-      <section className="hero">
-        <div className="hero-content">
+      {/* Landing Page */}
+      {page === "landing" && (
+        <div className="landing-page">
           <h1>Välkommen till Vaultrex</h1>
           <p>
-            Smarta lösningar för lagerhantering och tjänster. Automatisera
-            beställningar och hantera allt enkelt online.
+            Smidig hantering av inventarier och tjänster. Logga in för att få
+            full kontroll på ditt konto.
           </p>
-          <a href="#services" className="cta-btn">
-            Våra tjänster
-          </a>
+          <button onClick={() => setPage("login")}>Logga in</button>
         </div>
-      </section>
+      )}
 
-      {/* SERVICES */}
-      <section className="services" id="services">
-        <h2>Våra tjänster</h2>
-        <div className="services-grid">
-          <div className="service-card">
-            <h3>Bas</h3>
-            <p>
-              Hantera ditt lager smidigt med grundfunktioner för inventering och
-              scanning.
-            </p>
-          </div>
-          <div className="service-card">
-            <h3>Extra</h3>
-            <p>
-              Få automatiska beställningar, avancerad statistik och premium
-              support.
-            </p>
-          </div>
-        </div>
-      </section>
-
-      {/* FAQ */}
-      <section className="faq" id="faq">
-        <h2>Vanliga frågor</h2>
-        <div className="faq-item">
-          <h4>Hur fungerar systemet?</h4>
-          <p>
-            Vaultrex automatiserar din lagerhantering och kopplas till dina
-            befintliga system.
-          </p>
-        </div>
-        <div className="faq-item">
-          <h4>Kan jag prova gratis?</h4>
-          <p>Ja, du kan prova vårt baspaket gratis i 14 dagar.</p>
-        </div>
-      </section>
-
-      {/* LOGIN MODAL */}
-      {showLogin && (
-        <div className="login-overlay" onClick={() => setShowLogin(false)}>
-          <div
-            className="login-modal"
-            onClick={(e) => e.stopPropagation()}
-          >
+      {/* Login Page */}
+      {page === "login" && (
+        <div className="login-container">
+          <div className="login-box">
             <h2>Logga in</h2>
-            <form
-              onSubmit={(e) => {
-                e.preventDefault();
-                // Skicka login request här
-                alert("Login skickat");
-              }}
-            >
-              <label>
-                Email
-                <input type="email" placeholder="Din email" required />
-              </label>
-              <label>
-                Lösenord
-                <input type="password" placeholder="Lösenord" required />
-              </label>
+            <form onSubmit={handleLogin}>
+              <input
+                type="email"
+                placeholder="E-post"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+              />
+              <input
+                type="password"
+                placeholder="Lösenord"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+              />
               <button type="submit">Logga in</button>
             </form>
           </div>
         </div>
       )}
 
-      {/* FOOTER */}
-      <footer className="footer">
-        <p>© {new Date().getFullYear()} Vaultrex AB</p>
-      </footer>
-    </div>
+      {/* Dashboard */}
+      {page === "dashboard" && (
+        <div className="dashboard">
+          <h2>Dina tjänster</h2>
+          <div className="services-grid">
+            {services.map((service) => (
+              <div key={service.id} className="service-card">
+                <h3>{service.name}</h3>
+                <p>Status: {service.status}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+    </>
   );
 }
+
+export default App;
