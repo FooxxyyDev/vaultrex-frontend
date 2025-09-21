@@ -1,119 +1,90 @@
-import React, { useState } from "react";
+import React from "react";
+import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
 import "./App.css";
+import logo from "./assets/vaultrex-logo.png.png"; // din logga
 
-function App() {
-  const [showLogin, setShowLogin] = useState(false);
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [loginMessage, setLoginMessage] = useState("");
-  const [loggedIn, setLoggedIn] = useState(false);
-
-  const handleLogin = async (e) => {
-    e.preventDefault();
-    try {
-      const res = await fetch("https://vaultrex-backend.onrender.com/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password })
-      });
-      const data = await res.json();
-
-      if (res.ok) {
-        setLoggedIn(true);
-        setLoginMessage("Du är inloggad!");
-        setShowLogin(false);
-      } else {
-        setLoginMessage(data.message || "Fel e-post eller lösenord");
-      }
-    } catch (err) {
-      console.error(err);
-      setLoginMessage("Något gick fel vid inloggningen");
-    }
-  };
-
+// Sidor
+function Landing() {
   return (
-    <div className="app">
-      {/* Header */}
-      <header className="header">
-        <div className="logo">Vaultrex</div>
-        <nav className="nav">
-          <a href="#services">Tjänster</a>
-          <a href="#faq">FAQ</a>
-          {!loggedIn && (
-            <button
-              className="login-btn"
-              onClick={() => setShowLogin(!showLogin)}
-            >
-              {showLogin ? "Stäng login" : "Logga in"}
-            </button>
-          )}
-          {loggedIn && <span className="logged-in">Inloggad</span>}
-        </nav>
-      </header>
-
-      {/* Landing Content */}
-      <section className="hero">
-        <h1>Välkommen till Vaultrex</h1>
-        <p>Smarta lösningar för inventering, tjänster och administration</p>
-      </section>
-
-      <section id="services" className="services">
-        <h2>Våra tjänster</h2>
-        <div className="service-card">
-          <h3>Bas</h3>
-          <p>Inventeringssystem för små företag.</p>
-        </div>
-        <div className="service-card">
-          <h3>Extra</h3>
-          <p>Tilläggstjänster för automatiserad beställning och scanning.</p>
-        </div>
-        <div className="service-card">
-          <h3>Premium</h3>
-          <p>Allt-i-ett lösning för stora företag med avancerad analys.</p>
-        </div>
-      </section>
-
-      <section id="faq" className="faq">
-        <h2>Vanliga frågor</h2>
-        <div className="faq-item">
-          <h4>Hur funkar Vaultrex?</h4>
-          <p>Vaultrex hjälper företag att hålla koll på lager och tjänster automatiskt.</p>
-        </div>
-        <div className="faq-item">
-          <h4>Kan jag uppgradera min plan?</h4>
-          <p>Ja, du kan uppgradera eller nedgradera din plan när som helst.</p>
-        </div>
-      </section>
-
-      {/* Login Modal */}
-      {showLogin && !loggedIn && (
-        <div className="login-modal">
-          <div className="login-box">
-            <h2>Logga in</h2>
-            <form onSubmit={handleLogin}>
-              <input
-                type="email"
-                placeholder="E-post"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-              />
-              <input
-                type="password"
-                placeholder="Lösenord"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-              />
-              <button type="submit">Logga in</button>
-            </form>
-            {loginMessage && <p className="login-message">{loginMessage}</p>}
-          </div>
-        </div>
-      )}
-
-      {/* Footer */}
-      <footer className="footer">© 2025 Vaultrex</footer>
+    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-900 text-white">
+      <h1 className="text-4xl font-bold mb-4">Välkommen till Vaultrex</h1>
+      <p className="text-lg mb-6 text-gray-300">
+        Smidig inventering och tjänstehantering för företag.
+      </p>
+      <Link
+        to="/login"
+        className="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 px-6 rounded-lg shadow-md transition"
+      >
+        Logga in
+      </Link>
     </div>
   );
 }
 
-export default App;
+function Login() {
+  return (
+    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-900 text-white">
+      <h2 className="text-3xl font-bold mb-4">Logga in</h2>
+      <form className="bg-gray-800 p-6 rounded-lg shadow-md w-80">
+        <label className="block mb-2 text-sm">E-post</label>
+        <input
+          type="email"
+          placeholder="Din e-post"
+          className="w-full mb-4 px-3 py-2 rounded bg-gray-700 text-white"
+        />
+        <label className="block mb-2 text-sm">Lösenord</label>
+        <input
+          type="password"
+          placeholder="Ditt lösenord"
+          className="w-full mb-4 px-3 py-2 rounded bg-gray-700 text-white"
+        />
+        <button
+          type="submit"
+          className="w-full bg-indigo-600 hover:bg-indigo-700 text-white py-2 rounded transition"
+        >
+          Logga in
+        </button>
+      </form>
+    </div>
+  );
+}
+
+function Dashboard() {
+  return (
+    <div className="p-6 bg-gray-100 min-h-screen">
+      <h2 className="text-2xl font-bold text-gray-900 mb-4">Dashboard</h2>
+      <p className="text-gray-700">Här kommer dina tjänster och inventering.</p>
+    </div>
+  );
+}
+
+export default function App() {
+  return (
+    <Router>
+      <header className="bg-gray-900 text-white p-4 flex items-center justify-between">
+        <div className="flex items-center space-x-3">
+          <img src={logo} alt="Vaultrex Logo" className="h-10 w-auto" />
+          <h1 className="text-2xl font-bold">Vaultrex</h1>
+        </div>
+
+        <nav className="space-x-4">
+          <Link to="/" className="hover:text-indigo-400">
+            Hem
+          </Link>
+          <Link to="/login" className="hover:text-indigo-400">
+            Logga in
+          </Link>
+          <Link to="/dashboard" className="hover:text-indigo-400">
+            Dashboard
+          </Link>
+        </nav>
+      </header>
+
+      <Routes>
+        <Route path="/" element={<Landing />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/dashboard" element={<Dashboard />} />
+      </Routes>
+    </Router>
+  );
+}
