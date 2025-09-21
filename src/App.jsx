@@ -1,119 +1,81 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import "./App.css";
 
-const API_URL = "https://vaultrex-backend.onrender.com"; // byt till din backend URL
-
-function App() {
-  const [tab, setTab] = useState("home");
-  const [user, setUser] = useState(null);
+export default function App() {
+  const [page, setPage] = useState("landing"); // landing | login | dashboard
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [inventory, setInventory] = useState([]);
-  const [services, setServices] = useState([
-    { name: "Bas Tjänst", status: "Tillgänglig" },
-    { name: "Extra Tjänst 1", status: "Tillgänglig" },
-    { name: "Extra Tjänst 2", status: "Tillgänglig" },
-  ]);
 
-  const login = async () => {
-    try {
-      const res = await fetch(`${API_URL}/login`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
-      });
-      const data = await res.json();
-      if (data && data.id) {
-        setUser(data);
-        setTab("services");
-        fetchInventory(data.id);
-      } else {
-        alert("Felaktig inloggning!");
-      }
-    } catch (err) {
-      alert("Fel vid inloggning!");
-      console.error(err);
-    }
-  };
-
-  const logout = () => {
-    setUser(null);
-    setEmail("");
-    setPassword("");
-    setTab("home");
-  };
-
-  const fetchInventory = async (userId) => {
-    try {
-      const res = await fetch(`${API_URL}/inventory/${userId}`);
-      const data = await res.json();
-      setInventory(data);
-    } catch (err) {
-      console.error(err);
+  const handleLogin = (e) => {
+    e.preventDefault();
+    // Här kan du byta ut mot riktig fetch till backend
+    if (email === "admin@vaultrex.se" && password === "admin") {
+      setPage("dashboard");
+    } else {
+      alert("Fel email eller lösenord");
     }
   };
 
   return (
-    <div className="App">
-      <header>
-        <h1>Vaultrex Inventory</h1>
-        <nav>
-          <button onClick={() => setTab("home")} className={tab === "home" ? "active" : ""}>Startsida</button>
-          {user && (
-            <>
-              <button onClick={() => setTab("services")} className={tab === "services" ? "active" : ""}>Mina Tjänster</button>
-              <button onClick={() => setTab("inventory")} className={tab === "inventory" ? "active" : ""}>Inventory</button>
-              <button onClick={logout}>Logga ut</button>
-            </>
-          )}
-          {!user && <button onClick={() => setTab("login")} className={tab === "login" ? "active" : ""}>Login</button>}
-        </nav>
-      </header>
+    <div className="app-container">
+      {page === "landing" && (
+        <div className="landing">
+          <h1 className="title">Välkommen till Vaultrex</h1>
+          <p className="subtitle">
+            Hantera dina inventarier och tjänster enkelt.
+          </p>
+          <button className="btn-primary" onClick={() => setPage("login")}>
+            Logga in
+          </button>
+        </div>
+      )}
 
-      <main>
-        {tab === "home" && (
-          <section className="home">
-            <h2>Välkommen till Vaultrex</h2>
-            <p>Vi hanterar ditt lager och dina tjänster på ett smart och futuristiskt sätt.</p>
-          </section>
-        )}
+      {page === "login" && (
+        <div className="login">
+          <h2 className="title">Logga in</h2>
+          <form onSubmit={handleLogin} className="login-form">
+            <input
+              type="email"
+              placeholder="E-post"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+            />
+            <input
+              type="password"
+              placeholder="Lösenord"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+            />
+            <button type="submit" className="btn-primary">
+              Logga in
+            </button>
+          </form>
+          <button className="btn-secondary" onClick={() => setPage("landing")}>
+            Tillbaka
+          </button>
+        </div>
+      )}
 
-        {tab === "login" && !user && (
-          <section className="login">
-            <h2>Login</h2>
-            <input type="email" placeholder="Email" value={email} onChange={e => setEmail(e.target.value)} />
-            <input type="password" placeholder="Lösenord" value={password} onChange={e => setPassword(e.target.value)} />
-            <button onClick={login}>Logga in</button>
-          </section>
-        )}
-
-        {tab === "services" && user && (
-          <section className="services">
-            <h2>Mina Tjänster</h2>
-            <ul>
-              {services.map((s, idx) => (
-                <li key={idx}>
-                  {s.name} - {s.status}
-                  <button onClick={() => alert(`Abonnerar på ${s.name}`)}>Abonnera</button>
-                </li>
-              ))}
-            </ul>
-          </section>
-        )}
-
-        {tab === "inventory" && user && (
-          <section className="inventory">
-            <h2>Inventory</h2>
-            <ul>
-              {inventory.map((i) => (
-                <li key={i.id}>{i.name} - {i.quantity}</li>
-              ))}
-            </ul>
-          </section>
-        )}
-      </main>
+      {page === "dashboard" && (
+        <div className="dashboard">
+          <h2 className="title">Ditt konto</h2>
+          <div className="services-grid">
+            <div className="service-card">
+              <h3>Bas</h3>
+              <p>Grundläggande funktioner för lager & tjänster</p>
+            </div>
+            <div className="service-card">
+              <h3>Extra Tjänster</h3>
+              <p>Utökade funktioner för avancerad hantering</p>
+            </div>
+          </div>
+          <button className="btn-secondary" onClick={() => setPage("landing")}>
+            Logga ut
+          </button>
+        </div>
+      )}
     </div>
   );
 }
-
-export default App;
