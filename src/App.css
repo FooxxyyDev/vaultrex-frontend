@@ -1,43 +1,181 @@
-:root {
-  --bg-color: #121212;
-  --primary-color: #00f2ff;
-  --text-color: #ffffff;
-  --card-bg: #1e1e1e;
+/* Basstil */
+* {
+  box-sizing: border-box;
 }
 
 body {
-  background-color: var(--bg-color);
-  color: var(--text-color);
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   margin: 0;
-  padding: 0;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  background-color: #f5f6fa; /* ljus bakgrund för innehåll */
+  color: #333;
 }
 
-.app-header {
+/* Header */
+header {
+  background-color: #111827; /* mörk header */
+  color: #fff;
+  padding: 0.75rem 1.5rem;
   display: flex;
   align-items: center;
-  padding: 1rem;
-  background-color: var(--card-bg);
-  border-bottom: 1px solid var(--primary-color);
+  justify-content: space-between;
 }
 
-.logo {
-  height: 40px;
-  margin-right: 1rem;
-}
 header img {
-  max-height: 40px;
+  max-height: 40px; /* logga maxhöjd */
+  width: auto;
+  display: block;
 }
-button {
-  background-color: var(--primary-color);
-  color: #000;
+
+header h1 {
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+
+header nav a {
+  color: #d1d5db;
+  text-decoration: none;
+  margin-left: 1rem;
+  font-size: 0.95rem;
+  transition: color 0.2s ease;
+}
+
+header nav a:hover {
+  color: #6366f1; /* accentfärg */
+}
+
+/* Landing page */
+.landing {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 4rem 1rem;
+  text-align: center;
+  background: linear-gradient(160deg, #4f46e5, #312e81);
+  color: white;
+  min-height: calc(100vh - 60px);
+}
+
+.landing h1 {
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+}
+
+.landing p {
+  font-size: 1.125rem;
+  margin-bottom: 2rem;
+  max-width: 600px;
+}
+
+.landing .btn {
+  background-color: #fff;
+  color: #4f46e5;
+  padding: 0.75rem 1.5rem;
+  font-weight: 600;
+  border-radius: 0.5rem;
+  text-decoration: none;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.landing .btn:hover {
+  background-color: #e5e7eb;
+  color: #4338ca;
+}
+
+/* Login */
+.login-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem 1rem;
+  min-height: calc(100vh - 60px);
+  background-color: #f5f6fa;
+}
+
+.login-form {
+  background-color: #fff;
+  padding: 2rem;
+  border-radius: 0.75rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  width: 100%;
+  max-width: 360px;
+}
+
+.login-form h2 {
+  margin-bottom: 1.5rem;
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #111827;
+}
+
+.login-form label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #374151;
+}
+
+.login-form input {
+  width: 100%;
+  padding: 0.5rem 0.75rem;
+  margin-bottom: 1rem;
+  border: 1px solid #d1d5db;
+  border-radius: 0.5rem;
+  font-size: 0.95rem;
+  color: #111827;
+}
+
+.login-form button {
+  width: 100%;
+  background-color: #4f46e5;
+  color: #fff;
+  font-weight: 600;
+  padding: 0.75rem;
   border: none;
-  padding: 0.6rem 1.2rem;
-  border-radius: 8px;
+  border-radius: 0.5rem;
+  font-size: 1rem;
   cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.login-form button:hover {
+  background-color: #4338ca;
+}
+
+/* Dashboard */
+.dashboard {
+  padding: 2rem;
+  background-color: #f5f6fa;
+}
+
+.dashboard h2 {
+  font-size: 1.75rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+  color: #111827;
+}
+
+.dashboard p {
+  color: #374151;
   font-size: 1rem;
 }
 
-button:hover {
-  background-color: #00d2e5;
+/* Responsivitet */
+@media (max-width: 768px) {
+  header nav a {
+    margin-left: 0.5rem;
+    font-size: 0.85rem;
+  }
+
+  .landing h1 {
+    font-size: 2rem;
+  }
+
+  .landing p {
+    font-size: 1rem;
+  }
 }
