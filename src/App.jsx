@@ -1,9 +1,35 @@
-// src/App.jsx
 import React, { useState } from "react";
 import "./App.css";
 
 function App() {
   const [showLogin, setShowLogin] = useState(false);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [loginMessage, setLoginMessage] = useState("");
+  const [loggedIn, setLoggedIn] = useState(false);
+
+  const handleLogin = async (e) => {
+    e.preventDefault();
+    try {
+      const res = await fetch("https://vaultrex-backend.onrender.com/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password })
+      });
+      const data = await res.json();
+
+      if (res.ok) {
+        setLoggedIn(true);
+        setLoginMessage("Du är inloggad!");
+        setShowLogin(false);
+      } else {
+        setLoginMessage(data.message || "Fel e-post eller lösenord");
+      }
+    } catch (err) {
+      console.error(err);
+      setLoginMessage("Något gick fel vid inloggningen");
+    }
+  };
 
   return (
     <div className="app">
@@ -13,9 +39,15 @@ function App() {
         <nav className="nav">
           <a href="#services">Tjänster</a>
           <a href="#faq">FAQ</a>
-          <button className="login-btn" onClick={() => setShowLogin(!showLogin)}>
-            {showLogin ? "Stäng login" : "Logga in"}
-          </button>
+          {!loggedIn && (
+            <button
+              className="login-btn"
+              onClick={() => setShowLogin(!showLogin)}
+            >
+              {showLogin ? "Stäng login" : "Logga in"}
+            </button>
+          )}
+          {loggedIn && <span className="logged-in">Inloggad</span>}
         </nav>
       </header>
 
@@ -35,6 +67,10 @@ function App() {
           <h3>Extra</h3>
           <p>Tilläggstjänster för automatiserad beställning och scanning.</p>
         </div>
+        <div className="service-card">
+          <h3>Premium</h3>
+          <p>Allt-i-ett lösning för stora företag med avancerad analys.</p>
+        </div>
       </section>
 
       <section id="faq" className="faq">
@@ -43,18 +79,33 @@ function App() {
           <h4>Hur funkar Vaultrex?</h4>
           <p>Vaultrex hjälper företag att hålla koll på lager och tjänster automatiskt.</p>
         </div>
+        <div className="faq-item">
+          <h4>Kan jag uppgradera min plan?</h4>
+          <p>Ja, du kan uppgradera eller nedgradera din plan när som helst.</p>
+        </div>
       </section>
 
       {/* Login Modal */}
-      {showLogin && (
+      {showLogin && !loggedIn && (
         <div className="login-modal">
           <div className="login-box">
             <h2>Logga in</h2>
-            <form>
-              <input type="email" placeholder="E-post" />
-              <input type="password" placeholder="Lösenord" />
+            <form onSubmit={handleLogin}>
+              <input
+                type="email"
+                placeholder="E-post"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+              />
+              <input
+                type="password"
+                placeholder="Lösenord"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+              />
               <button type="submit">Logga in</button>
             </form>
+            {loginMessage && <p className="login-message">{loginMessage}</p>}
           </div>
         </div>
       )}
