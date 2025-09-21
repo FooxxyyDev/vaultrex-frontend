@@ -1,181 +1,224 @@
-/* Basstil */
-* {
-  box-sizing: border-box;
-}
-
+/* Global */
 body {
   margin: 0;
-  font-family: 'Inter', system-ui, -apple-system, sans-serif;
-  background-color: #f5f6fa; /* ljus bakgrund för innehåll */
-  color: #333;
+  font-family: 'Inter', system-ui, sans-serif;
+  background: #f8fafc;
+  color: #1f2937;
+}
+
+.App {
+  width: 100%;
 }
 
 /* Header */
-header {
-  background-color: #111827; /* mörk header */
-  color: #fff;
+.site-header {
+  background: #111827;
+  color: white;
   padding: 0.75rem 1.5rem;
   display: flex;
-  align-items: center;
   justify-content: space-between;
+  align-items: center;
 }
 
-header img {
-  max-height: 40px; /* logga maxhöjd */
+.logo-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.logo {
+  max-height: 50px;
   width: auto;
-  display: block;
 }
 
-header h1 {
-  margin: 0;
+.site-title {
   font-size: 1.5rem;
   font-weight: 700;
+  margin: 0;
 }
 
-header nav a {
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.nav-links a {
   color: #d1d5db;
   text-decoration: none;
-  margin-left: 1rem;
   font-size: 0.95rem;
-  transition: color 0.2s ease;
 }
 
-header nav a:hover {
-  color: #6366f1; /* accentfärg */
+.nav-links a:hover {
+  color: #6366f1;
 }
 
-/* Landing page */
-.landing {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 4rem 1rem;
-  text-align: center;
+.login-btn {
+  background: #4f46e5;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.login-btn:hover {
+  background: #4338ca;
+}
+
+/* Hero / landing */
+.hero {
   background: linear-gradient(160deg, #4f46e5, #312e81);
   color: white;
-  min-height: calc(100vh - 60px);
+  padding: 5rem 1rem;
+  text-align: center;
 }
 
-.landing h1 {
+.hero-content h1 {
   font-size: 2.5rem;
-  font-weight: 700;
   margin-bottom: 0.5rem;
 }
 
-.landing p {
+.hero-content p {
   font-size: 1.125rem;
   margin-bottom: 2rem;
   max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
 }
 
-.landing .btn {
-  background-color: #fff;
+.cta-btn {
+  background: #fff;
   color: #4f46e5;
   padding: 0.75rem 1.5rem;
-  font-weight: 600;
   border-radius: 0.5rem;
   text-decoration: none;
-  transition: background-color 0.2s ease, color 0.2s ease;
+  font-weight: 600;
 }
 
-.landing .btn:hover {
-  background-color: #e5e7eb;
-  color: #4338ca;
-}
-
-/* Login */
-.login-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
+/* Services */
+.services {
   padding: 3rem 1rem;
-  min-height: calc(100vh - 60px);
-  background-color: #f5f6fa;
+  text-align: center;
 }
 
-.login-form {
-  background-color: #fff;
+.services h2 {
+  font-size: 2rem;
+  margin-bottom: 2rem;
+}
+
+.services-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 1.5rem;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.service-card {
+  background: white;
+  padding: 1.5rem;
+  border-radius: 0.75rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.service-card h3 {
+  font-size: 1.25rem;
+  margin-bottom: 0.5rem;
+}
+
+/* FAQ */
+.faq {
+  padding: 3rem 1rem;
+  background: #f1f5f9;
+}
+
+.faq h2 {
+  text-align: center;
+  font-size: 2rem;
+  margin-bottom: 2rem;
+}
+
+.faq-item {
+  max-width: 700px;
+  margin: 0 auto 1.5rem;
+  text-align: left;
+}
+
+.faq-item h4 {
+  font-size: 1.125rem;
+  margin-bottom: 0.25rem;
+}
+
+/* Login modal */
+.login-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.login-modal {
+  background: white;
   padding: 2rem;
   border-radius: 0.75rem;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-  width: 100%;
-  max-width: 360px;
+  width: 90%;
+  max-width: 400px;
 }
 
-.login-form h2 {
-  margin-bottom: 1.5rem;
-  font-size: 1.5rem;
-  font-weight: 600;
-  color: #111827;
+.login-modal h2 {
+  margin-top: 0;
 }
 
-.login-form label {
-  display: block;
-  margin-bottom: 0.5rem;
-  font-size: 0.875rem;
-  font-weight: 500;
-  color: #374151;
+.login-modal form {
+  display: flex;
+  flex-direction: column;
 }
 
-.login-form input {
-  width: 100%;
-  padding: 0.5rem 0.75rem;
+.login-modal input {
+  padding: 0.5rem;
   margin-bottom: 1rem;
-  border: 1px solid #d1d5db;
   border-radius: 0.5rem;
-  font-size: 0.95rem;
-  color: #111827;
+  border: 1px solid #d1d5db;
 }
 
-.login-form button {
-  width: 100%;
-  background-color: #4f46e5;
-  color: #fff;
-  font-weight: 600;
+.login-modal button {
+  background: #4f46e5;
+  color: white;
   padding: 0.75rem;
   border: none;
   border-radius: 0.5rem;
-  font-size: 1rem;
+  font-weight: 600;
   cursor: pointer;
-  transition: background-color 0.2s ease;
 }
 
-.login-form button:hover {
-  background-color: #4338ca;
+.login-modal button:hover {
+  background: #4338ca;
 }
 
-/* Dashboard */
-.dashboard {
-  padding: 2rem;
-  background-color: #f5f6fa;
+/* Footer */
+.footer {
+  background: #111827;
+  color: #9ca3af;
+  text-align: center;
+  padding: 1rem;
+  font-size: 0.875rem;
 }
 
-.dashboard h2 {
-  font-size: 1.75rem;
-  font-weight: 700;
-  margin-bottom: 1rem;
-  color: #111827;
-}
-
-.dashboard p {
-  color: #374151;
-  font-size: 1rem;
-}
-
-/* Responsivitet */
+/* Responsivt */
 @media (max-width: 768px) {
-  header nav a {
-    margin-left: 0.5rem;
-    font-size: 0.85rem;
-  }
-
-  .landing h1 {
+  .hero-content h1 {
     font-size: 2rem;
   }
 
-  .landing p {
-    font-size: 1rem;
+  .site-title {
+    font-size: 1.25rem;
   }
 }
