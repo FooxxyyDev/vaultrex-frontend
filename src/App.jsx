@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import "./App.css";
-import logo from "./assets/vaultrex-logo.png"; // loggan du laddade upp – se till att den ligger i src/assets
+import logo from "./assets/vaultrex-logo.png.png"; // loggan du laddade upp – se till att den ligger i src/assets
 
 function App() {
   const [page, setPage] = useState("landing"); // landing, login, dashboard
