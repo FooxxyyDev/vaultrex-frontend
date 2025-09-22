@@ -6,6 +6,7 @@ const LazyQrScanner = React.lazy(() =>
 export default function Inventory() {
   const [scanResult, setScanResult] = useState("");
   const [isClient, setIsClient] = useState(false);
+  const [lastAction, setLastAction] = useState("");
 
   useEffect(() => {
     setIsClient(true);
@@ -18,7 +19,17 @@ export default function Inventory() {
         <Suspense fallback={<div>Loading scanner…</div>}>
           <LazyQrScanner
             onDecode={(result) => {
-              if (result) setScanResult(result);
+              if (result) {
+                setScanResult(result);
+                import("./store").then(({ consumeByCode }) => {
+                  const out = consumeByCode(String(result).trim(), 1);
+                  if (out?.product) {
+                    setLastAction(`Konsumerade 1 st av ${out.product.name}. Nytt saldo: ${out.product.onHand}`);
+                  } else if (out?.error) {
+                    setLastAction(`Fel: ${out.error}`);
+                  }
+                });
+              }
             }}
             onError={(error) => {
               if (error) console.error(error);
@@ -31,6 +42,7 @@ export default function Inventory() {
         <div>Preparing camera…</div>
       )}
       <p>Senast skannade: {scanResult}</p>
+      {lastAction && <p>{lastAction}</p>}
     </div>
   );
 }

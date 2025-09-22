@@ -5,6 +5,9 @@ import logo from "./assets/vaultrex-logo.png.png"; // loggan du laddade upp – 
 import Dashboard from "./Dashboard";
 import Inventory from "./Inventory";
 import Services from "./Services";
+import Products from "./Products";
+import Vendors from "./Vendors";
+import PurchaseOrders from "./PurchaseOrders";
 
 function App() {
   const navigate = useNavigate();
@@ -132,6 +135,9 @@ function App() {
         {!user && <Link to="/login">Logga in</Link>}
         {user && <Link to="/dashboard">Dashboard</Link>}
         {user && <Link to="/inventory">Inventory</Link>}
+        {user && <Link to="/products">Produkter</Link>}
+        {user && <Link to="/vendors">Leverantörer</Link>}
+        {user && <Link to="/pos">Inköpsorder</Link>}
         {user && <Link to="/services">Tjänster</Link>}
         <span style={{ flex: 1 }} />
         <button className="btn btn-outline" onClick={toggleTheme}>
@@ -257,6 +263,30 @@ function App() {
           element={
             <ProtectedRoute>
               <Inventory />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/products"
+          element={
+            <ProtectedRoute>
+              <Products />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/vendors"
+          element={
+            <ProtectedRoute>
+              <Vendors />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/pos"
+          element={
+            <ProtectedRoute>
+              <PurchaseOrders />
             </ProtectedRoute>
           }
         />
