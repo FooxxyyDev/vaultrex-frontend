@@ -1,4 +1,5 @@
 import React, { useEffect, useState, Suspense } from "react";
+import { getRole, canConsume } from "./auth";
 const LazyQrScanner = React.lazy(() =>
   import("@yudiel/react-qr-scanner").then((m) => ({ default: m.QrScanner }))
 );
@@ -7,6 +8,7 @@ export default function Inventory() {
   const [scanResult, setScanResult] = useState("");
   const [isClient, setIsClient] = useState(false);
   const [lastAction, setLastAction] = useState("");
+  const [role] = useState(getRole());
 
   useEffect(() => {
     setIsClient(true);
@@ -21,6 +23,10 @@ export default function Inventory() {
             onDecode={(result) => {
               if (result) {
                 setScanResult(result);
+                if (!canConsume(role)) {
+                  setLastAction("Behörighet saknas för att konsumera.");
+                  return;
+                }
                 import("./store").then(({ consumeByCode }) => {
                   const out = consumeByCode(String(result).trim(), 1);
                   if (out?.product) {

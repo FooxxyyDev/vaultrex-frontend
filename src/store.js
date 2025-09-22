@@ -12,9 +12,9 @@ function loadInitialData() {
   const now = new Date().toISOString();
   const initial = {
     products: [
-      { id: "sku-1001", sku: "1001", name: "Nitrilhandskar M", onHand: 24, minStock: 20, reorderQty: 50, vendorId: "v-axn", barcode: "1001" },
-      { id: "sku-1002", sku: "1002", name: "Nitrilhandskar L", onHand: 12, minStock: 20, reorderQty: 50, vendorId: "v-axn", barcode: "1002" },
-      { id: "sku-2001", sku: "2001", name: "Alkogel 500ml", onHand: 8, minStock: 10, reorderQty: 24, vendorId: "v-med", barcode: "2001" },
+      { id: "sku-1001", sku: "1001", name: "Nitrilhandskar M", onHand: 24, minStock: 20, reorderQty: 50, vendorId: "v-axn", barcode: "1001", autoReorder: true },
+      { id: "sku-1002", sku: "1002", name: "Nitrilhandskar L", onHand: 12, minStock: 20, reorderQty: 50, vendorId: "v-axn", barcode: "1002", autoReorder: true },
+      { id: "sku-2001", sku: "2001", name: "Alkogel 500ml", onHand: 8, minStock: 10, reorderQty: 24, vendorId: "v-med", barcode: "2001", autoReorder: true },
     ],
     vendors: [
       { id: "v-axn", name: "AxNord AB", leadTimeDays: 5 },
@@ -109,6 +109,7 @@ export function createPOForVendor(vendorId, lines) {
 }
 
 function maybeAutoCreatePO(product) {
+  if (!product.autoReorder) return;
   if (product.onHand > product.minStock) return;
   const existingOpen = store.purchaseOrders.find((po) => (po.status === "draft" || po.status === "sent") && po.lines.some((l) => l.productId === product.id));
   if (existingOpen) return;

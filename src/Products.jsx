@@ -28,6 +28,17 @@ export default function Products() {
             <p>SKU: {p.sku}</p>
             <p>Lagersaldo: {p.onHand}</p>
             <p>Min nivå: {p.minStock} | Omorder: {p.reorderQty}</p>
+          <label style={{ display: "flex", gap: 6, alignItems: "center" }}>
+            <input
+              type="checkbox"
+              checked={!!p.autoReorder}
+              onChange={(e) => {
+                upsertProduct({ ...p, autoReorder: e.target.checked });
+                setTick((t) => t + 1);
+              }}
+            />
+            Auto‑PO
+          </label>
             <button className="btn btn-outline" onClick={() => onQuickInc(p.id)}>+1</button>
           </div>
         ))}

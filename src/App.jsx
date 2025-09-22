@@ -8,6 +8,7 @@ import Services from "./Services";
 import Products from "./Products";
 import Vendors from "./Vendors";
 import PurchaseOrders from "./PurchaseOrders";
+import { Roles, getRole, setRole } from "./auth";
 
 function App() {
   const navigate = useNavigate();
@@ -18,6 +19,7 @@ function App() {
   const [user, setUser] = useState(null);
   const [services, setServices] = useState([]);
   const [theme, setTheme] = useState("dark");
+  const [role, setRoleState] = useState(getRole());
 
   const API_URL = "https://vaultrex-backend.onrender.com"; // din backend
 
@@ -46,6 +48,12 @@ function App() {
     setTheme(next);
     document.documentElement.setAttribute("data-theme", next);
     localStorage.setItem("theme", next);
+  };
+
+  const onChangeRole = (e) => {
+    const r = e.target.value;
+    setRole(r);
+    setRoleState(r);
   };
 
   async function tryFetchJson(url, options) {
@@ -143,6 +151,14 @@ function App() {
         <button className="btn btn-outline" onClick={toggleTheme}>
           {theme === "dark" ? "Light mode" : "Dark mode"}
         </button>
+        {user && (
+          <select value={role} onChange={onChangeRole} style={{ marginLeft: 8 }}>
+            <option value={Roles.Admin}>Admin</option>
+            <option value={Roles.Buyer}>Buyer</option>
+            <option value={Roles.Picker}>Picker</option>
+            <option value={Roles.Viewer}>Viewer</option>
+          </select>
+        )}
         {user && (
           <button className="btn btn-outline" onClick={handleLogout} style={{ marginLeft: 8 }}>
             Logga ut
