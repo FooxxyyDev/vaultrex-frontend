@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Scanner } from "@yudiel/react-qr-scanner";
+import { QrReader } from "react-qr-reader";
 
 export default function Inventory() {
   const [scanResult, setScanResult] = useState("");
@@ -7,13 +7,14 @@ export default function Inventory() {
   return (
     <div>
       <h2>Inventory</h2>
-      <div style={{ maxWidth: 480 }}>
-        <Scanner
-          onDecode={(result) => setScanResult(result || "")}
-          onError={(error) => console.error(error?.message || error)}
-          constraints={{ facingMode: "environment" }}
-        />
-      </div>
+      <QrReader
+        onResult={(result, error) => {
+          if (!!result) setScanResult(result?.text);
+          if (!!error) console.error(error);
+        }}
+        constraints={{ facingMode: "environment" }}
+        style={{ width: "100%" }}
+      />
       <p>Senast skannade: {scanResult}</p>
     </div>
   );
