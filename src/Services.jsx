@@ -1,21 +1,18 @@
-import React, { useState } from "react";
-import { QrReader } from "react-qr-reader";
+import React from "react";
 
-export default function Services() {
-  const [scanResult, setScanResult] = useState("");
-
+export default function Services({ services = [] }) {
   return (
-    <div>
-      <h2>Services</h2>
-      <QrReader
-        onResult={(result, error) => {
-          if (!!result) setScanResult(result?.text);
-          if (!!error) console.error(error);
-        }}
-        constraints={{ facingMode: "environment" }}
-        style={{ width: "100%" }}
-      />
-      <p>Senast skannade: {scanResult}</p>
+    <div className="dashboard">
+      <h2>Dina tjänster</h2>
+      <div className="services-grid">
+        {services.length === 0 && <p>Inga tjänster att visa ännu.</p>}
+        {services.map((service) => (
+          <div key={service.id} className="service-card">
+            <h3>{service.name}</h3>
+            <p>Status: {service.status}</p>
+          </div>
+        ))}
+      </div>
     </div>
   );
 }
