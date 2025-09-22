@@ -1,12 +1,12 @@
 import React, { useState } from "react";
 import { QrReader } from "react-qr-reader";
 
-export default function Inventory() {
+export default function Services() {
   const [scanResult, setScanResult] = useState("");
 
   return (
     <div>
-      <h2>Inventory</h2>
+      <h2>Services</h2>
       <QrReader
         onResult={(result, error) => {
           if (!!result) setScanResult(result?.text);
